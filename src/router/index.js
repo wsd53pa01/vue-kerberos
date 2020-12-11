@@ -44,6 +44,32 @@ export const constantRoutes = [
   },
 
   {
+    path: '/boards',
+    component: Layout,
+    children: [
+      {
+        path: '/boards',
+        name: 'Boards',
+        component: () => import('@/views/boards/index'),
+        meta: { title: '應用程式看板', icon: 'dashboard' }
+      }
+    ]
+  },
+
+  {
+    path: '/actions',
+    component: Layout,
+    children: [
+      {
+        path: '/actions',
+        name: 'Actions',
+        component: () => import('@/views/actions/index'),
+        meta: { title: '功能管理', icon: 'menu' }
+      }
+    ]
+  },
+
+  {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
