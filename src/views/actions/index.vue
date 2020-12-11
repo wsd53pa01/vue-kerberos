@@ -20,19 +20,39 @@
       </el-col>
     </el-row>
 
-    <action :application-id="applicationId" />
+    <el-row :gutter="20">
+      <el-col :span="12">
+        <el-card class="box-card action-card">
+          <action 
+          :application-id="applicationId" 
+          @emitActionDetail="getActionDetail" />
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card class="box-card action-card">
+          <action-detail
+            :application-id="applicationId"
+            :action-detail="actionDetail"
+          />
+        </el-card>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
-import Action from './Action'
+import Action from '@/components/Action'
+import ActionDetail from '@/components/ActionDetail'
+const id = 0
 
 export default {
-  components: { Action },
+  components: { Action, ActionDetail },
   data() {
     return {
       applicationId: '',
-      applications: []
+      applications: [],
+      data: [],
+      actionDetail: {},
     }
   },
   created() {
@@ -43,6 +63,11 @@ export default {
         this.applicationId = application.id
       }
     })
+  },
+  watch: {
+    applicationId: function(newVal, oldVal) {
+      this.applicationId = newVal
+    }
   },
   methods: {
     getApplications() {
@@ -57,7 +82,10 @@ export default {
       })
       application.isActive = true
       this.applicationId = application.id
-    }
+    },
+    getActionDetail(actionDetail) {
+      this.actionDetail = actionDetail
+    },
   }
 }
 </script>
@@ -82,6 +110,11 @@ export default {
 }
 .el-col {
   border-radius: 4px;
+}
+
+.action-card {
+  overflow-y: scroll;
+  height: calc(100vh - 50px);
 }
 </style>
 

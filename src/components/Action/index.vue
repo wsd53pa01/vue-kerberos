@@ -1,49 +1,49 @@
 <template>
-    <div>
-        <div class="title">功能列表</div>
-        <div class="content">
-            <el-row :gutter="20">
-                <el-col :span="12">
-                <el-input
-                    placeholder="搜尋"
-                    prefix-icon="el-icon-search"
-                />
-                </el-col>
-                <el-button type="success" icon="el-icon-s-order" circle :disabled="isCopyDisabled" />
-            </el-row>
-            <el-tree
-                ref="tree"
-                :data="data"
-                show-checkbox
-                node-key="id"
-                default-expand-all
-                highlight-current
-                :expand-on-click-node="false"
-                @check-change="onNodeChecked"
-                @node-click="onNodeClicked"
+  <div>
+    <div class="title">功能列表</div>
+    <div class="content">
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-input
+            placeholder="搜尋"
+            prefix-icon="el-icon-search"
+          />
+        </el-col>
+        <el-button type="success" icon="el-icon-s-order" circle :disabled="isCopyDisabled" />
+      </el-row>
+      <el-tree
+        ref="tree"
+        :data="data"
+        show-checkbox
+        node-key="id"
+        default-expand-all
+        highlight-current
+        :expand-on-click-node="false"
+        @check-change="onNodeChecked"
+        @node-click="onNodeClicked"
+      >
+        <span slot-scope="{ node, data }" class="custom-tree-node">
+          <span>{{ node.label }}</span>
+          <span>
+            <el-button
+              type="text"
+              size="mini"
+              @click="() => append(data)"
             >
-                <span slot-scope="{ node, data }" class="custom-tree-node">
-                <span>{{ node.label }}</span>
-                <span>
-                    <el-button
-                    type="text"
-                    size="mini"
-                    @click="() => append(data)"
-                    >
-                    新增
-                    </el-button>
-                    <el-button
-                    type="text"
-                    size="mini"
-                    @click="() => remove(node, data)"
-                    >
-                    刪除
-                    </el-button>
-                </span>
-                </span>
-            </el-tree>
-        </div>
+              新增
+            </el-button>
+            <el-button
+              type="text"
+              size="mini"
+              @click="() => remove(node, data)"
+            >
+              刪除
+            </el-button>
+          </span>
+        </span>
+      </el-tree>
     </div>
+  </div>
 </template>
 
 <script>
@@ -66,24 +66,24 @@ export default {
   data() {
     return {
       data: [],
-      isCopyDisabled: true,
+      isCopyDisabled: true
     }
   },
   watch: {
     applicationId: function(newVal, oldVal) {
       this.init(newVal)
-    },
+    }
   },
   created() {
     this.init(this.applicationId)
   },
   methods: {
-    init(applicationId){
+    init(applicationId) {
       this.getActions(applicationId)
     },
 
     append(data) {
-      let newChild = Object.assign({}, defaultNode)
+      const newChild = Object.assign({}, defaultNode)
       // TODO: call 建立的api後，放入新建立的Action
       newChild.id = id++
       newChild.label = '新節點'
