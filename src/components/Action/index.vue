@@ -234,7 +234,7 @@ export default {
       this.actionDetail = node
       this.parentCodes = this.data.map(node => {
         return node.parentCode
-      }).filter(parentCode => parentCode != node.parentCode)
+      }).filter(parentCode => parentCode !== node.parentCode)
       this.isSubmitDisabled = false
       this.operationFlags = operationFlagDecode(this.permissions.map(x => x.permission), this.actionDetail.operationFlag)
     }
