@@ -1,50 +1,50 @@
-<template >
+<template>
   <div class="full-height">
     <el-row :gutter="20" class="full-height">
       <el-col :span="12" class="scrollable full-height">
         <div class="title">功能列表</div>
-          <div class="content">
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-input
-                  placeholder="搜尋"
-                  prefix-icon="el-icon-search"
-                />
-              </el-col>
-              <el-button type="success" icon="el-icon-s-order" circle :disabled="isCopyDisabled" />
-            </el-row>
-            <el-tree
-              ref="tree"
-              :data="data"
-              show-checkbox
-              node-key="id"
-              default-expand-all
-              highlight-current
-              :expand-on-click-node="false"
-              @check-change="onNodeChecked"
-              @node-click="onNodeClicked"
-            >
-              <span slot-scope="{ node, data }" class="custom-tree-node">
-                <span>{{ node.label }}</span>
-                <span>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="() => append(data)"
-                  >
-                    新增
-                  </el-button>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="() => remove(node, data)"
-                  >
-                    刪除
-                  </el-button>
-                </span>
+        <div class="content">
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-input
+                placeholder="搜尋"
+                prefix-icon="el-icon-search"
+              />
+            </el-col>
+            <el-button type="success" icon="el-icon-s-order" circle :disabled="isCopyDisabled" />
+          </el-row>
+          <el-tree
+            ref="tree"
+            :data="data"
+            show-checkbox
+            node-key="id"
+            default-expand-all
+            highlight-current
+            :expand-on-click-node="false"
+            @check-change="onNodeChecked"
+            @node-click="onNodeClicked"
+          >
+            <span slot-scope="{ node, data }" class="custom-tree-node">
+              <span>{{ node.label }}</span>
+              <span>
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="() => append(data)"
+                >
+                  新增
+                </el-button>
+                <el-button
+                  type="text"
+                  size="mini"
+                  @click="() => remove(node, data)"
+                >
+                  刪除
+                </el-button>
               </span>
-            </el-tree>
-          </div>
+            </span>
+          </el-tree>
+        </div>
       </el-col>
 
       <el-col :span="12" class="scrollable full-height">
@@ -53,11 +53,11 @@
           <el-form ref="form" :label-position="'top'" :model="actionDetail">
             <el-form-item label="父節點名稱">
               <el-select v-model="actionDetail.parentCode" class="full-width" placeholder="請選擇">
-                <el-option 
+                <el-option
                   v-for="parentCode in parentCodes"
                   :key="parentCode"
                   :value="parentCode"
-                ></el-option>
+                />
               </el-select>
             </el-form-item>
             <el-form-item label="選單名稱">
@@ -111,16 +111,16 @@
             </el-form-item>
           </el-form>
         </div>
-        
+
       </el-col>
     </el-row>
 
     <el-dialog title="" :visible.sync="isPermissionVisible">
-        <el-table>
-            <el-table-column label="Date" width="150"></el-table-column>
-            <el-table-column label="Name" width="200"></el-table-column>
-            <el-table-column label="Address"></el-table-column>
-        </el-table>
+      <el-table>
+        <el-table-column label="Date" width="150" />
+        <el-table-column label="Name" width="200" />
+        <el-table-column label="Address" />
+      </el-table>
     </el-dialog>
   </div>
 </template>
@@ -139,7 +139,7 @@ const defaultNode = {
   menuName: '',
   operationFlag: 0,
   parentCode: '',
-  sortNumber: 0,
+  sortNumber: 0
 }
 let id = 0
 export default {
@@ -152,17 +152,17 @@ export default {
       isSubmitDisabled: true,
       permissions: [],
       operationFlags: [],
-      isPermissionVisible: false,
-    }
-  },
-  watch: {
-    applicationId: function(newVal, oldVal) {
-      this.init(newVal)
+      isPermissionVisible: false
     }
   },
   computed: {
     applicationId() {
       return this.$store.state.application.id
+    }
+  },
+  watch: {
+    applicationId: function(newVal, oldVal) {
+      this.init(newVal)
     }
   },
   created() {
@@ -233,7 +233,7 @@ export default {
     onNodeClicked(node) {
       this.actionDetail = node
       this.parentCodes = this.data.map(node => {
-        return node.parentCode;
+        return node.parentCode
       }).filter(parentCode => parentCode != node.parentCode)
       this.isSubmitDisabled = false
       this.operationFlags = operationFlagDecode(this.permissions.map(x => x.permission), this.actionDetail.operationFlag)

@@ -2,14 +2,14 @@
   <div class="app-container">
     <el-row :gutter="20">
       <el-col :span="24">
-        <application-card></application-card>
+        <application-card />
       </el-col>
     </el-row>
 
     <el-row :gutter="20">
       <el-col :span="24">
         <el-card class="box-card screen-height" :body-style="{ height:'inherit' }">
-            <action></action>
+          <action />
         </el-card>
       </el-col>
     </el-row>
@@ -18,14 +18,14 @@
 
 <script>
 import Action from '@/components/Action'
-import ApplicationCard from '@/components/ApplicationCard';
+import ApplicationCard from '@/components/ApplicationCard'
 
 export default {
   components: { Action, ApplicationCard },
   data() {
     return {
     }
-  },
+  }
 }
 </script>
 
