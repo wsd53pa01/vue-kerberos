@@ -45,7 +45,8 @@ export default {
     },
 
     directUrl: function(applicationId) {
-      this.$router.push({ path: 'actions', query: { applicationId: applicationId }})
+      this.$store.commit('application/SET_ID', applicationId)
+      this.$router.push({ path: 'actions' })
     }
   }
 }
