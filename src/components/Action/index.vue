@@ -181,7 +181,7 @@ export default {
       const newChild = Object.assign({}, defaultNode)
       newChild.id = id++
       newChild.label = '新節點'
-      newChild.menuName = '新節點' + '1123123123123'
+      newChild.menuName = '新節點'
       // TODO: call 建立的api後，放入新建立的Action
       this.onNodeClicked(newChild)
       if (!data.children) {
