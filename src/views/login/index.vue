@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <el-card class="login-card">
-      <div slot="header" class="clearfix" style="border-radius: 4px"></div>
+      <div slot="header" class="clearfix" style="border-radius: 4px" />
       <div class="card-body">
         <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
           <div class="title-container">
@@ -42,7 +42,7 @@
               <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
             </span>
           </el-form-item>
-          <el-checkbox style="display:block; margin-bottom: 5px" v-model="checked">記住我</el-checkbox>
+          <el-checkbox v-model="checked" style="display:block; margin-bottom: 5px">記住我</el-checkbox>
           <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登入</el-button></el-button>
         </el-form>
       </div>
