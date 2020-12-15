@@ -1,6 +1,6 @@
 module.exports = [
     {
-        url: '/vue-admin-template/actions\.*',
+        url: '/vue-admin-template/action\.*',
         type: 'get',
         response: config => {
             const { applicationId } = config.query

@@ -1,6 +1,6 @@
 module.exports = [
     {
-        url: '/vue-admin-template/permissions',
+        url: '/vue-admin-template/permission',
         type: 'get',
         response: config => {
             const { applicationId } = config.query

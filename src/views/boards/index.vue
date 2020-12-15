@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { getApplications } from '@/api/application'
+import { getApplication } from '@/api/application'
 
 export default {
   data() {
@@ -34,7 +34,7 @@ export default {
   },
   methods: {
     getApplications: function() {
-      getApplications()
+      getApplication()
         .then((result) => {
           if (result.isSuccess) {
             this.applications = result.data.applications
