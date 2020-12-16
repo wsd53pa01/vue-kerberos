@@ -185,6 +185,27 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/backend-platform',
+    component: Layout,
+    // redirect: '/example/table',
+    name: '後台管理',
+    meta: { title: '後臺管理', icon: 'el-icon-monitor' },
+    children: [
+      {
+        path: 'organization-setting',
+        name: '組織設定',
+        component: () => import('@/views/organization-setting/index'),
+        meta: { title: '組織設定' }
+      },
+      {
+        path: 'permission-template-setting',
+        name: '權限範本設定',
+        component: () => import('@/views/permission-template-setting/index'),
+        meta: { title: '權限範本設定' }
+      }
+    ]
+  },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
