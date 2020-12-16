@@ -1,15 +1,24 @@
+
 <template>
   <div class="context-container">
     <Table
-      :title="'組織設定'"
+      :title="'權限範本'"
       :fields="[{
+        prop: 'id',
+        label: '代碼',
+        width: '180',
+        dialog: {
+          show: false,
+        },
+        filter: {
+          show: true,
+        }
+      }, {
         prop: 'name',
-        label: '組織名稱',
+        label: '範本名稱',
         dialog: {
           show: true,
-          data: [{ value: 1, text: '嘉里大榮物流股份有限公司'}, { value: 2, text: 'Organization 5' }],
-          type: 'select',
-          require: true,
+          type: 'text',
         },
         filter: {
           show: true,
@@ -17,7 +26,7 @@
       }]"
       dialogWidth='400px'
       :tableData="tableData"
-      :fetchData="getOrganizations"
+      :fetchData="fetchData"
       :createOption="createOption"
       :deleteOption="deleteOption"
       :updateOption="updateOption"
@@ -29,18 +38,16 @@
 
 <script>
 import {
-  getOrganization,
-  createOrganization,
-  updateOrganization,
-  deleteOrganization
-  } from '@/api/organization'
-import Pagination from '@/components/Pagination'
+  getPermissionTemplate,
+  createPermissionTemplate,
+  updatePermissionTemplate,
+  deletePermissionTemplate
+} from '@/api/permission-template'
 import Table from '@/components/Table'
 
 export default {
-  name: 'OraganizationSetting',
+  name: 'PermissionTemplateSetting',
   components: {
-    Pagination,
     Table
   },
   data() {
@@ -53,15 +60,6 @@ export default {
     }
     return {
       tableData: {},
-      //TODO: 換成 api 取得組織
-      adOrganizations: (() => {
-        const prefixString = ''
-        let result = []
-        for (let i = 0; i <= 10; i++) {
-          result.push(prefixString + i)
-        }
-        return result;
-      })(),
       createOption: {
         hidden: false,
         event: this.createEvent
@@ -71,38 +69,49 @@ export default {
         event: this.deleteEvent
       },
       updateOption: {
-        hidden:false,
-        event: this.updateEvent
+        hidden: false,
+        event: this.updateEvent,
       },
       loading: false
     }
   },
   methods: {
-    getOrganizations(query) {
-      this.tableLoading = true
-      getOrganization(query).then(response => {
+    fetchData(query) {
+      this.loading = true
+      getPermissionTemplate(query).then((response) => {
         setTimeout(() => {
-          this.tableLoading = false
+          this.loading = false,
           this.tableData = response.data
-        }, 150)
+        }, 1000)
       })
     },
     createEvent(data) {
-      createOrganization(data).then(response => {
-        if (response.isSuccess) {
-          this.tableData.list.unshift(data)
-        }
+      this.loading = true
+      createPermissionTemplate(data).then((response) => {
+        let specifyData = this.tableData.list.find(item => item.id == response.data[0].i)
+        if (specifyData == null)
+          this.tableData.list.unshift(response.data[0])
+        else
+          specifyData.name = data.name
+        this.loading = false
       })
     },
     updateEvent(data) {
-      updateOrganization(data).then((response) => {
+      this.loading = true
+      updatePermissionTemplate(data).then((response) => {
         let findData = this.tableData.list.find(x => x.id == data.id)
-          findData.name = data.name
+        findData.name = data.name
+        this.loading = false
       })
     },
-    deleteEvent(row, index) {
-      deleteOrganization(row.id).then((response) => {
-        this.tableData.list.splice(index, 1)
+    deleteEvent(data) {
+      this.loading = true
+      deletePermissionTemplate(data).then((response) => {
+        this.tableData.list.filter(item => {
+          if(item.id == data.id)
+            item.name = ''
+        })
+        this.loading = false
       })
     }
   }

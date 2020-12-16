@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export async function getOrganization(query) {
+export function getOrganization(query) {
   return request({
     url: '/organization',
     method: 'get',

@@ -175,7 +175,7 @@ export const constantRoutes = [
       {
         path: 'permission-template-setting',
         name: '權限範本設定',
-        component: () => import('@/views/tree/index'),
+        component: () => import('@/views/permission-template-setting/index'),
         meta: { title: '權限範本設定' }
       }
     ]
