@@ -126,8 +126,8 @@
 </template>
 
 <script>
-import { getActions } from '@/api/actions'
-import { getPermissions } from '@/api/permissions'
+import { getAction } from '@/api/action'
+import { getPermission } from '@/api/permission'
 import { operationFlagDecode } from '@/utils/operationFlag'
 
 const defaultNode = {
@@ -198,7 +198,7 @@ export default {
     },
 
     getActions(applicationId) {
-      getActions(applicationId).then(result => {
+      getAction(applicationId).then(result => {
         this.data = result.data.actions || []
         this.data.forEach(action => {
           action.label = action.menuName
@@ -210,7 +210,7 @@ export default {
     },
 
     getPermissions(applicationId) {
-      getPermissions(applicationId).then(result => {
+      getPermission(applicationId).then(result => {
         if (result.isSuccess) {
           this.permissions = result.data.permissions
         }
@@ -234,7 +234,7 @@ export default {
       this.actionDetail = node
       this.parentCodes = this.data.map(node => {
         return node.parentCode
-      }).filter(parentCode => parentCode != node.parentCode)
+      }).filter(parentCode => parentCode !== node.parentCode)
       this.isSubmitDisabled = false
       this.operationFlags = operationFlagDecode(this.permissions.map(x => x.permission), this.actionDetail.operationFlag)
     }

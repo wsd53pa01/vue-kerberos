@@ -70,6 +70,19 @@ export const constantRoutes = [
   },
 
   {
+    path: '/role',
+    component: Layout,
+    children: [
+      {
+        path: '/role',
+        name: 'Role',
+        component: () => import('@/views/role/index'),
+        meta: { title: '角色管理', icon: 'role' }
+      }
+    ]
+  },
+
+  {
     path: '/',
     component: Layout,
     redirect: '/dashboard',

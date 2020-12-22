@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function getPermissions(applicationId) {
+export function getPermission(applicationId) {
   return request({
-    url: '/vue-admin-template/permissions',
+    url: '/vue-admin-template/permission',
     method: 'get',
     params: { applicationId }
   })
