@@ -7,7 +7,7 @@
         v-for="application in applications"
         :key="application.id"
         :type="application.isActive ? 'primary' : 'default'"
-        :style="{ width: setApplicationWidth() }"
+        :class="{ 'flex-button': isFullApplication }"
         @click="onApplicationClick(application)"
       >
         {{ application.name }}
@@ -21,7 +21,9 @@ import { getApplication } from '@/api/application'
 export default {
   data() {
     return {
-      applications: []
+      applications: [],
+      isFullApplication: false,
+      index: 0
     }
   },
   computed: {
@@ -33,17 +35,21 @@ export default {
     this.getApplications()
   },
   mounted() {
-    window.addEventListener('resize', this.setApplicationWidth)
+    window.addEventListener('resize', this.customApplicationClass)
+    this.customApplicationClass()
   },
   destroyed() {
-    window.removeEventListener('resize', this.setApplicationWidth)
+    window.removeEventListener('resize', this.customApplicationClass)
   },
   methods: {
     getApplications() {
       getApplication()
         .then(result => {
           if (result.isSuccess) {
-            this.applications = result.data.applications
+            this.applications = []
+            result.data.applications.forEach(x => {
+              this.applications.push(Object.assign({ isActive: false }, x))
+            })
             this.setApplicationActive()
           }
         })
@@ -55,9 +61,6 @@ export default {
     setApplicationActive() {
       this.applications.forEach(application => {
         application.isActive = application.id == this.applicationId
-        const tempApplicationName = application.name
-        application.name = ''
-        application.name = tempApplicationName
       })
     },
 
@@ -66,9 +69,9 @@ export default {
       this.setApplicationActive()
     },
 
-    setApplicationWidth(application) {
+    customApplicationClass() {
       const cardWidth = this.$refs.card.$el.clientWidth
-      return cardWidth >= '400' ? '23.5%' : '100%'
+      this.isFullApplication = cardWidth < '450'
     }
   }
 }
@@ -76,17 +79,20 @@ export default {
 
 <style lang="scss" scoped>
 .el-button {
-  margin: 0.4rem;
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
   padding-top: 20px;
   padding-bottom: 20px;
   overflow: hidden;
+  width: 23.5%;
 }
 
-.el-button:hover {
-  color: #45a1ff;
+.flex-button {
+  width: 100%;
+  margin-left: 0;
 }
 
-.el-input {
-  margin: 0.4rem;
+.el-card {
+  overflow: auto;
 }
 </style>

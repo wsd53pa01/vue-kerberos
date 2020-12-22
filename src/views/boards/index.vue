@@ -60,10 +60,6 @@ export default {
   padding-bottom: 20px;
 }
 
-.el-button:hover {
-  color: #45A1FF;
-}
-
 .el-input {
   margin: .4rem;
 }
