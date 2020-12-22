@@ -3,6 +3,8 @@ const { param2Obj } = require('./utils')
 
 const user = require('./user')
 const table = require('./table')
+const organization = require('./organization')
+const permissionTemplate = require('./permission-template')
 const application = require('./application')
 const action = require('./action')
 const permission = require('./permission')
@@ -14,6 +16,8 @@ const status = require('./status')
 const mocks = [
   ...user,
   ...table,
+  ...organization,
+  ...permissionTemplate,
   ...application,
   ...action,
   ...permission,
