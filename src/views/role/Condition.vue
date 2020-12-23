@@ -8,7 +8,7 @@
         class="condition-button"
         @click="onConditionChange()"
       >
-        {{ decorateButton }}
+        {{ conditionButton }}
       </el-button>
     </div>
     <div class="card-content">
@@ -76,7 +76,7 @@ export default {
       type: String,
       required: true
     },
-    decorateButton: {
+    conditionButton: {
       type: String,
       required: true
     },

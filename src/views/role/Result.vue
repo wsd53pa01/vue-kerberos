@@ -33,7 +33,7 @@
         type="primary"
         class="submit"
         :disabled="disabled"
-        @click="submit"
+        @click="getSelected"
         >送出</el-button
       >
     </div>
@@ -86,7 +86,7 @@ export default {
       this.selectionItems = val
     },
 
-    submit() {
+    getSelected() {
       this.$emit('getSelected', this.selectionItems)
       this.disabled = true
     },

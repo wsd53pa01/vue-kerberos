@@ -83,7 +83,7 @@ const group2 = [
 
 module.exports = [
   {
-    url: "/vue-admin-template/status",
+    url: "/role-group",
     type: "get",
     response: config => {
       const { applicationId, roleId, groupId } = config.query;
@@ -98,6 +98,18 @@ module.exports = [
         result = groupId == '1' ? group1 : group2
       }
 
+      return createResult(false, "", 20000, {
+        status: result.filter(x => x.applicationId == applicationId)
+      });
+    }
+  },
+
+  {
+    url: "/role-group",
+    type: "post",
+    response: config => {
+      const { roleId, groupId } = config.body;
+      
       return createResult(false, "", 20000, {
         status: result.filter(x => x.applicationId == applicationId)
       });

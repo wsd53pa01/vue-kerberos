@@ -16,6 +16,7 @@ propDialog: {
         v-for="(field, index) in fields"
         v-show="field.filter.show"
         v-model="tableFilter[field.prop]"
+        :key="index"
         :placeholder="field.label"
         @keyup.enter.native="handleFilter()"
         style="width: 180px;"
@@ -85,6 +86,7 @@ propDialog: {
 
         <el-table-column
           v-for="(field, index) in fields"
+          :key="index"
           :prop="field.prop"
           :label="field.label"
           :width="field.width"
@@ -111,7 +113,7 @@ propDialog: {
           :rules="rules"
           :model="form"
         >
-          <div v-for="(field, index) in fields">
+          <div v-for="(field, index) in fields" :key="index">
             <el-form-item
               v-show="field.dialog.show"
               :label="field.label"
