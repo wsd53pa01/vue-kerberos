@@ -6,12 +6,20 @@
         <div class="content">
           <el-row :gutter="20">
             <el-col :span="12">
-              <el-input
-                placeholder="搜尋"
-                prefix-icon="el-icon-search"
-              />
+              <el-input placeholder="搜尋" prefix-icon="el-icon-search" />
             </el-col>
-            <el-button type="success" icon="el-icon-s-order" circle :disabled="isCopyDisabled" />
+            <el-button
+              type="primary"
+              icon="el-icon-plus"
+              circle
+              @click="addNewNode()"
+            />
+            <el-button
+              type="success"
+              icon="el-icon-s-order"
+              circle
+              :disabled="isCopyDisabled"
+            />
           </el-row>
           <el-tree
             ref="tree"
@@ -27,11 +35,7 @@
             <span slot-scope="{ node, data }" class="custom-tree-node">
               <span>{{ node.label }}</span>
               <span>
-                <el-button
-                  type="text"
-                  size="mini"
-                  @click="() => append(data)"
-                >
+                <el-button type="text" size="mini" @click="() => append(data)">
                   新增
                 </el-button>
                 <el-button
@@ -52,7 +56,11 @@
         <div class="content">
           <el-form ref="form" :label-position="'top'" :model="actionDetail">
             <el-form-item label="父節點名稱">
-              <el-select v-model="actionDetail.parentCode" class="full-width" placeholder="請選擇">
+              <el-select
+                v-model="actionDetail.parentCode"
+                class="full-width"
+                placeholder="請選擇"
+              >
                 <el-option
                   v-for="parentCode in parentCodes"
                   :key="parentCode"
@@ -76,15 +84,23 @@
               label="排序編號"
               prop="sortNumber"
               :rules="[
-                { required: true, message: '排序編號為必填'},
-                { type: 'number', message: '排序編號須為數字'}
+                { required: true, message: '排序編號為必填' },
+                { type: 'number', message: '排序編號須為數字' },
               ]"
             >
-              <el-input v-model.number="actionDetail.sortNumber" type="sortNumber" />
+              <el-input
+                v-model.number="actionDetail.sortNumber"
+                type="sortNumber"
+              />
             </el-form-item>
             <el-form-item label="temp">
-              <span slot="label">操作功能
-                <el-button type="primary" size="mini" @click="isPermissionVisible = true">
+              <span slot="label"
+                >操作功能
+                <el-button
+                  type="primary"
+                  size="mini"
+                  @click="isPermissionVisible = true"
+                >
                   管理操作功能
                 </el-button>
               </span>
@@ -111,7 +127,6 @@
             </el-form-item>
           </el-form>
         </div>
-
       </el-col>
     </el-row>
 
@@ -126,7 +141,12 @@
 </template>
 
 <script>
-import { getAction } from '@/api/action'
+import {
+  getAction,
+  createAction,
+  updateAction,
+  deleteAction
+} from '@/api/action'
 import { getPermission } from '@/api/permission'
 import { operationFlagDecode } from '@/utils/operationFlag'
 
@@ -162,14 +182,14 @@ export default {
   },
   watch: {
     applicationId: function(newVal, oldVal) {
-      this.init(newVal)
+      this.renderPage(newVal)
     }
   },
   created() {
-    this.init(this.applicationId)
+    this.renderPage(this.applicationId)
   },
   methods: {
-    init(applicationId) {
+    renderPage(applicationId) {
       this.getActions(applicationId)
       this.getPermissions(applicationId)
       this.actionDetail = Object.assign({}, defaultNode)
@@ -182,45 +202,68 @@ export default {
       newChild.id = id++
       newChild.label = '新節點'
       newChild.menuName = '新節點'
-      // TODO: call 建立的api後，放入新建立的Action
-      this.onNodeClicked(newChild)
-      if (!data.children) {
-        this.$set(data, 'children', [])
-      }
-      data.children.push(newChild)
+      createAction(newChild).then(x => {
+        // TODO: call 建立的api後，放入新建立的Action
+        if (!data.children) {
+          this.$set(data, 'children', [])
+        }
+        data.children.push(newChild)
+        this.onNodeClicked(newChild)
+      })
     },
 
     remove(node, data) {
       const parent = node.parent
       const children = parent.data.children || parent.data
-      const index = children.findIndex((d) => d.id === data.id)
+      const index = children.findIndex(d => d.id === data.id)
       children.splice(index, 1)
     },
 
     getActions(applicationId) {
-      getAction(applicationId).then(result => {
-        this.data = result.data.actions || []
-        this.data.forEach(action => {
-          action.label = action.menuName
-          action.isNew = false
+      getAction(applicationId)
+        .then(result => {
+          this.data = []
+          result.data.forEach(action => {
+            this.data.push(
+              Object.assign({ label: action.menuName }, action)
+            )
+          })
         })
-      }).catch(e => {
-        throw (e)
-      })
+        .catch(e => {
+          throw e
+        })
     },
 
     getPermissions(applicationId) {
-      getPermission(applicationId).then(result => {
-        if (result.isSuccess) {
-          this.permissions = result.data.permissions
-        }
-      }).catch(err => {
-        throw (err)
-      })
+      getPermission(applicationId)
+        .then(result => {
+          if (result.isSuccess) {
+            this.permissions = result.data
+          }
+        })
+        .catch(err => {
+          throw err
+        })
+    },
+
+    addNewNode(node) {
+      const newChild = Object.assign({}, defaultNode)
+      newChild.id = id++
+      newChild.label = '新節點'
+      newChild.menuName = '新節點'
+      // TODO: call 建立的api後，放入新建立的Action
+      this.onNodeClicked(newChild)
+      if (!data.children) {
+        this.$set(data, 'children', [])
+      }
+      this.data.push(newChild)
     },
 
     submitForm() {
-      this.actionDetail.operationFlag = this.operationFlags.reduce((prev, curr) => prev + curr, 0)
+      this.actionDetail.operationFlag = this.operationFlags.reduce(
+        (prev, curr) => prev + curr,
+        0
+      )
       this.isSubmitDisabled = true
       console.log(this.actionDetail)
     },
@@ -232,11 +275,16 @@ export default {
 
     onNodeClicked(node) {
       this.actionDetail = node
-      this.parentCodes = this.data.map(node => {
-        return node.parentCode
-      }).filter(parentCode => parentCode !== node.parentCode)
+      this.parentCodes = this.data
+        .map(node => {
+          return node.parentCode
+        })
+        .filter(parentCode => parentCode !== node.parentCode)
       this.isSubmitDisabled = false
-      this.operationFlags = operationFlagDecode(this.permissions.map(x => x.permission), this.actionDetail.operationFlag)
+      this.operationFlags = operationFlagDecode(
+        this.permissions.map(x => x.permission),
+        this.actionDetail.operationFlag
+      )
     }
   }
 }
@@ -264,7 +312,7 @@ export default {
 
 .title {
   padding-bottom: 20px;
-  border-bottom: 1px solid #EBEEF5;;
+  border-bottom: 1px solid #ebeef5;
 }
 
 .content {
@@ -276,7 +324,7 @@ export default {
 }
 
 .scrollable {
-  overflow-y: scroll;
+  overflow: auto;
 }
 
 .full-height {

@@ -8,7 +8,7 @@ export function getRelation(applicationId, roleId, groupId) {
   })
 }
 
-export function getStatus(data) {
+export function createRelation(data) {
   return request({
     url: '/role-group',
     method: 'post',

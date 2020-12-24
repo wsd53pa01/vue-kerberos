@@ -98,9 +98,7 @@ module.exports = [
         result = groupId == '1' ? group1 : group2
       }
 
-      return createResult(false, "", 20000, {
-        status: result.filter(x => x.applicationId == applicationId)
-      });
+      return createResult(false, "", 20000, result.filter(x => x.applicationId == applicationId));
     }
   },
 
@@ -109,10 +107,9 @@ module.exports = [
     type: "post",
     response: config => {
       const { roleId, groupId } = config.body;
-      
-      return createResult(false, "", 20000, {
-        status: result.filter(x => x.applicationId == applicationId)
-      });
+
+
+      return createResult(true, "", 20000, []);
     }
   }
 ];

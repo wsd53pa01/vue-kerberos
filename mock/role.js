@@ -55,7 +55,6 @@ module.exports = [
       const body = config.body;
       body.id = Math.max(...data.map(x => x.id)) + 1
       data.push(body)
-      console.log(data);
       
       return {
         isSuccess: true,

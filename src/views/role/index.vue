@@ -10,9 +10,9 @@
           :condition-button="condition.conditionButton"
           :data="condition.data"
           :event="condition.event"
-          @getItemId="getItemId"
+          @getItemId="getRelation"
           @conditionChange="changeConditionFlag"
-          @blurFinish="eventFinished"
+          @blurFinish="reGetItems"
         />
       </el-col>
       <el-col :span="12">
@@ -33,7 +33,7 @@ import Condition from './Condition'
 import Result from './Result'
 import { getRole, createRole, updateRole, deleteRole } from '@/api/role'
 import { getGroup, createGroup, updateGroup, deleteGroup } from '@/api/group'
-import { getRelation } from '@/api/role-group'
+import { getRelation, createRelation } from '@/api/role-group'
 
 export default {
   components: { ApplicationCard, Condition, Result },
@@ -151,13 +151,13 @@ export default {
       this.renderCondition()
     },
 
-    getItemId(id) {
+    getRelation(id) {
       this.currentItemId = id
       const roleId = this.isByRole ? id : ''
       const groupId = this.isByRole ? '' : id
       getRelation(this.applicationId, roleId, groupId).then(response => {
         if (this.isByRole) {
-          this.result.data = response.data.status.map(x => {
+          this.result.data = response.data.map(x => {
             return {
               id: x.id,
               groupId: x.groupId,
@@ -178,15 +178,11 @@ export default {
       })
     },
 
-    eventFinished(apiResponse) {
+    reGetItems(apiResponse) {
       const promise = this.isByRole ? this.getRole() : this.getGroup()
-      promise.then(result => {
+      promise.then(_ => {
         this.renderCondition()
-        this.$notify({
-          title: 'Success',
-          message: apiResponse.message,
-          type: 'success'
-        })
+        this.success(apiResponse.message)
       })
     },
 
@@ -205,7 +201,20 @@ export default {
         toCreate.push(element)
       })
 
-      console.log(toCreate);
+      createRelation(toCreate).then(x => {
+        if(x.isSuccess){
+          this.getRelation(this.currentItemId)
+          this.success(apiResponse.message)
+        }
+      })
+    },
+
+    success(message) {
+      this.$notify({
+        title: 'Success',
+        message: message,
+        type: 'success'
+      })
     }
   }
 }
