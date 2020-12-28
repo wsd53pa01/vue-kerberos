@@ -8,6 +8,9 @@ const permissionTemplate = require('./permission-template')
 const application = require('./application')
 const actions = require('./actions')
 const permissions = require('./permissions')
+const group = require('./group')
+const groupUser = require('./group-user')
+
 
 const mocks = [
   ...user,
@@ -16,7 +19,9 @@ const mocks = [
   ...permissionTemplate,
   ...application,
   ...actions,
-  ...permissions
+  ...permissions,
+  ...group,
+  ...groupUser
 ]
 
 // for front mock

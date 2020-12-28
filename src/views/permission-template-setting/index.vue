@@ -88,7 +88,7 @@ export default {
     createEvent(data) {
       this.loading = true
       createPermissionTemplate(data).then((response) => {
-        let specifyData = this.tableData.list.find(item => item.id == response.data[0].i)
+        let specifyData = this.tableData.list.find(item => item.id == response.data[0].id)
         if (specifyData == null)
           this.tableData.list.unshift(response.data[0])
         else
@@ -105,12 +105,12 @@ export default {
       })
     },
     deleteEvent(data) {
-      this.loading = true
+    this.loading = true
       deletePermissionTemplate(data).then((response) => {
         this.tableData.list.filter(item => {
           if(item.id == data.id)
             item.name = ''
-        })
+      })
         this.loading = false
       })
     }
@@ -119,16 +119,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.context-container {
-  display: block;
-  position: absolute;
-  margin: 50px;
-  width: 90%;
-  height: auto;
-  left: 50%;
-  transform: translate(-55%, 0%);
-}
-
 .action-icon {
   text-align: center
 }

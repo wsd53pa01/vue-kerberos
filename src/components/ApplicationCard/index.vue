@@ -44,7 +44,6 @@ export default {
         throw (e)
       })
     },
-
     setApplicationActive() {
       this.applications.forEach(application => {
         application.isActive = application.id == this.applicationId
@@ -54,7 +53,6 @@ export default {
         application.name = tempApplicationName
       })
     },
-
     onApplicationClick(application) {
       this.$store.commit('application/SET_ID', application.id)
       this.setApplicationActive()

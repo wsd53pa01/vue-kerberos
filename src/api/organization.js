@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getOrganization(query) {
   return request({
-    url: '/organization',
+    url: '/organization/',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function getOrganization(query) {
 
 export function createOrganization(data) {
   return request({
-    url: '/organization',
+    url: '/organization/',
     method: 'post',
     data
   })
@@ -18,7 +18,7 @@ export function createOrganization(data) {
 
 export function updateOrganization(data) {
   return request({
-    url: '/organization',
+    url: '/organization/',
     method: 'put',
     data
   })
@@ -26,7 +26,7 @@ export function updateOrganization(data) {
 
 export function deleteOrganization(data) {
   return request({
-    url: '/organization',
+    url: '/organization/',
     method: 'delete',
     data
   })

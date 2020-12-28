@@ -2,14 +2,19 @@
   <div class="app-container">
     <el-card class="box-card">
       <h1 slot="header">應用程式列表</h1>
-      <el-input placeholder="搜尋" prefix-icon="el-icon-search" />
+      <el-input
+        v-model="search"
+        placeholder="搜尋"
+        prefix-icon="el-icon-search"
+      />
       <el-row>
-        <el-button>
-          <svg-icon icon-class="add" />
-        </el-button>
-
+        <router-link :to="'/boards/creation'">
+          <el-button>
+            <svg-icon icon-class="add" />
+          </el-button>
+        </router-link>
         <el-button
-          v-for="application in applications"
+          v-for="application in list"
           :key="application.id"
           @click="directUrl(application.id)"
         >
@@ -26,28 +31,38 @@ import { getApplications } from '@/api/application'
 export default {
   data() {
     return {
-      applications: []
+      applications: [],
+      search: '',
+      list: []
     }
   },
   created() {
     this.getApplications()
   },
+  watch: {
+    search() {
+      this.list = this.applications.filter(item => {
+        if (this.search && item.name.indexOf(this.search) < 0) return false
+        return true
+      })
+    }
+  },
   methods: {
-    getApplications: function() {
+    getApplications() {
       getApplications()
         .then((result) => {
           if (result.isSuccess) {
             this.applications = result.data.applications
+            this.list = this.applications
           }
         }).catch((err) => {
           throw err
         })
     },
-
-    directUrl: function(applicationId) {
+    directUrl(applicationId) {
       this.$store.commit('application/SET_ID', applicationId)
       this.$router.push({ path: 'actions' })
-    }
+    },
   }
 }
 </script>

@@ -42,7 +42,7 @@
               <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
             </span>
           </el-form-item>
-          <el-checkbox v-model="checked" style="display:block; margin-bottom: 5px">記住我</el-checkbox>
+          <el-checkbox style="display:block; margin-bottom: 5px">記住我</el-checkbox>
           <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登入</el-button></el-button>
         </el-form>
       </div>
