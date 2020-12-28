@@ -24,15 +24,14 @@
           show: true,
         }
       }]"
-      dialogWidth='400px'
-      :tableData="tableData"
-      :fetchData="fetchData"
-      :createOption="createOption"
-      :deleteOption="deleteOption"
-      :updateOption="updateOption"
+      dialog-width="400px"
+      :table-data="tableData"
+      :fetch-data="fetchData"
+      :create-option="createOption"
+      :delete-option="deleteOption"
+      :update-option="updateOption"
       :loading="loading"
-    >
-    </Table>
+    />
   </div>
 </template>
 
@@ -51,8 +50,8 @@ export default {
     Table
   },
   data() {
-    const validateOrganizationName =  (rule, value, callback) => {
-      if(value == '') {
+    const validateOrganizationName = (rule, value, callback) => {
+      if (value == '') {
         callback(new Error('請選擇組織名稱'))
       } else {
         callback()
@@ -70,7 +69,7 @@ export default {
       },
       updateOption: {
         hidden: false,
-        event: this.updateEvent,
+        event: this.updateEvent
       },
       loading: false
     }
@@ -88,18 +87,15 @@ export default {
     createEvent(data) {
       this.loading = true
       createPermissionTemplate(data).then((response) => {
-        let specifyData = this.tableData.list.find(item => item.id == response.data[0].i)
-        if (specifyData == null)
-          this.tableData.list.unshift(response.data[0])
-        else
-          specifyData.name = data.name
+        const specifyData = this.tableData.list.find(item => item.id == response.data[0].i)
+        if (specifyData == null) { this.tableData.list.unshift(response.data[0]) } else { specifyData.name = data.name }
         this.loading = false
       })
     },
     updateEvent(data) {
       this.loading = true
       updatePermissionTemplate(data).then((response) => {
-        let findData = this.tableData.list.find(x => x.id == data.id)
+        const findData = this.tableData.list.find(x => x.id == data.id)
         findData.name = data.name
         this.loading = false
       })
@@ -108,8 +104,7 @@ export default {
       this.loading = true
       deletePermissionTemplate(data).then((response) => {
         this.tableData.list.filter(item => {
-          if(item.id == data.id)
-            item.name = ''
+          if (item.id == data.id) { item.name = '' }
         })
         this.loading = false
       })
