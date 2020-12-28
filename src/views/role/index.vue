@@ -80,18 +80,18 @@ export default {
       currentItemId: 0
     }
   },
-  created() {
-    this.refreshPage()
+  computed: {
+    applicationId() {
+      return this.$store.state.application.id
+    }
   },
   watch: {
     applicationId() {
       this.refreshPage()
     }
   },
-  computed: {
-    applicationId() {
-      return this.$store.state.application.id
-    }
+  created() {
+    this.refreshPage()
   },
   methods: {
     refreshPage() {
@@ -192,7 +192,7 @@ export default {
       const toCreateResult = selected.map(x => {
         return x[resultKey]
       })
-      
+
       const toCreate = []
       toCreateResult.forEach(x => {
         const element = {}
@@ -202,7 +202,7 @@ export default {
       })
 
       createRelation(toCreate).then(x => {
-        if(x.isSuccess){
+        if (x.isSuccess) {
           this.getRelation(this.currentItemId)
           this.success(apiResponse.message)
         }

@@ -15,18 +15,19 @@ propDialog: {
       <el-input
         v-for="(field, index) in fields"
         v-show="field.filter.show"
-        v-model="tableFilter[field.prop]"
         :key="index"
+        v-model="tableFilter[field.prop]"
         :placeholder="field.label"
-        @keyup.enter.native="handleFilter()"
         style="width: 180px;"
+        @keyup.enter.native="handleFilter()"
       />
       <el-button
         class="filter-item"
         type="primary"
         icon="el-icon-search"
-        @click="handleFilter()">
-          搜尋
+        @click="handleFilter()"
+      >
+        搜尋
       </el-button>
       <el-button
         :class="{'hidden': createOption.hidden}"
@@ -39,14 +40,14 @@ propDialog: {
       </el-button>
 
       <el-table
+        v-loading="loading"
         :data="tableData.list"
         border
         style="width: 100%"
         size="mini"
         highlight-current-row
-        v-loading = "loading"
       >
-      <el-table-column
+        <el-table-column
           prop="action"
           label="動作"
           width="150"
@@ -61,10 +62,10 @@ propDialog: {
             <template slot-scope="{row,$index}">
               <el-button
                 style="font-size: x-large"
-                @click="handleUpdate(row)"
                 type="text"
-                icon="el-icon-edit">
-              </el-button>
+                icon="el-icon-edit"
+                @click="handleUpdate(row)"
+              />
             </template>
           </el-table-column>
           <el-table-column
@@ -76,10 +77,10 @@ propDialog: {
             <template slot-scope="{row,$index}">
               <el-button
                 style="font-size: x-large"
-                @click="deleteEvent(row, $index)"
                 type="text"
-                icon="el-icon-delete">
-              </el-button>
+                icon="el-icon-delete"
+                @click="deleteEvent(row, $index)"
+              />
             </template>
           </el-table-column>
         </el-table-column>
@@ -99,7 +100,8 @@ propDialog: {
         :total="tableData.total"
         :page.sync="tableFilter.page"
         :limit.sync="tableFilter.limit"
-        @pagination="fetchData(tableFilter)" />
+        @pagination="fetchData(tableFilter)"
+      />
 
       <!-- dialog -->
       <el-dialog
@@ -117,7 +119,8 @@ propDialog: {
             <el-form-item
               v-show="field.dialog.show"
               :label="field.label"
-              :prop="field.prop">
+              :prop="field.prop"
+            >
               <!-- select item -->
               <el-select
                 v-show="field.dialog.type == 'select'"
@@ -129,18 +132,18 @@ propDialog: {
                   v-for="item in field.dialog.data"
                   :key="item.text"
                   :label="item.text"
-                  :value="item.text">
-                </el-option>
+                  :value="item.text"
+                />
               </el-select>
               <!-- text input -->
               <div
                 v-show="field.dialog.type == 'text'"
-                style="display:inline-block; width:75%">
+                style="display:inline-block; width:75%"
+              >
                 <el-input
                   v-show="field.dialog.type == 'text'"
                   v-model="form[field.prop]"
-                >
-                </el-input>
+                />
               </div>
             </el-form-item>
           </div>
@@ -163,27 +166,6 @@ export default {
   components: {
     Pagination
   },
-  data() {
-    return {
-      dialog: {
-        status: '',
-        visible: false,
-        rule: '',
-        model: '',
-        item: [],
-      },
-      textMap:{
-        update: '更新',
-        create: '新增'
-      },
-      form: {},
-      rules: {},
-      tableFilter: {
-        page: 1,
-        limit: 20,
-      },
-    }
-  },
   props: {
     title: {
       required: true,
@@ -204,7 +186,7 @@ export default {
     createOption: {
       type: Object,
       validator: (value) => {
-        let isValid = true;
+        const isValid = true
         value = Object.assign({
           hidden: false
         }, value)
@@ -219,7 +201,30 @@ export default {
     },
     loading: {
       type: Boolean
-    },
+    }
+  },
+  data() {
+    return {
+      dialog: {
+        status: '',
+        visible: false,
+        rule: '',
+        model: '',
+        item: []
+      },
+      textMap: {
+        update: '更新',
+        create: '新增'
+      },
+      form: {},
+      rules: {},
+      tableFilter: {
+        page: 1,
+        limit: 20
+      }
+    }
+  },
+  computed: {
   },
   created() {
     this.fetchData(this.tableFilter)
@@ -230,16 +235,14 @@ export default {
           required: true,
           trigger: 'blur',
           validator: (rule, value, callback) => {
-            if(value == '') {
+            if (value == '') {
               callback(new Error(`請選擇${field.label}`))
             } else {
               callback()
             }
-        }}]
+          } }]
       }
     })
-  },
-  computed: {
   },
   methods: {
     handleCreate() {
@@ -311,7 +314,7 @@ export default {
         title: '成功',
         message: '删除成功',
         type: 'success',
-          duration: 2000
+        duration: 2000
       })
     }
   }

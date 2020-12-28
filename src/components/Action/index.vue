@@ -94,11 +94,13 @@
               />
             </el-form-item>
             <el-form-item label="temp">
-              <span slot="label"
-                >操作功能
+              <span
+                slot="label"
+              >操作功能
                 <el-button
                   type="primary"
                   size="mini"
+                  :disabled="isPermissionDisabled"
                   @click="isPermissionVisible = true"
                 >
                   管理操作功能
@@ -107,8 +109,8 @@
               <el-checkbox-group v-model="operationFlags">
                 <el-checkbox
                   v-for="permission in permissions"
-                  :key="permission.permission"
-                  :label="permission.permission"
+                  :key="permission.code"
+                  :label="permission.code"
                 >
                   {{ permission.name }}
                 </el-checkbox>
@@ -130,12 +132,10 @@
       </el-col>
     </el-row>
 
-    <el-dialog title="" :visible.sync="isPermissionVisible">
-      <el-table>
-        <el-table-column label="Date" width="150" />
-        <el-table-column label="Name" width="200" />
-        <el-table-column label="Address" />
-      </el-table>
+    <el-dialog title="操作功能管理" :visible.sync="isPermissionVisible" width="900px">
+      <permission
+        :permissions="permissions"
+      />
     </el-dialog>
   </div>
 </template>
@@ -149,6 +149,7 @@ import {
 } from '@/api/action'
 import { getPermission } from '@/api/permission'
 import { operationFlagDecode } from '@/utils/operationFlag'
+import Permission from './Permission'
 
 const defaultNode = {
   applicationId: 0,
@@ -163,6 +164,9 @@ const defaultNode = {
 }
 let id = 0
 export default {
+  components: {
+    Permission
+  },
   data() {
     return {
       data: [],
@@ -172,6 +176,7 @@ export default {
       isSubmitDisabled: true,
       permissions: [],
       operationFlags: [],
+      isPermissionDisabled: true,
       isPermissionVisible: false
     }
   },
@@ -182,6 +187,7 @@ export default {
   },
   watch: {
     applicationId: function(newVal, oldVal) {
+      this.isPermissionDisabled = !newVal
       this.renderPage(newVal)
     }
   },
@@ -191,10 +197,9 @@ export default {
   methods: {
     renderPage(applicationId) {
       this.getActions(applicationId)
-      this.getPermissions(applicationId)
+      this.getPermission(applicationId)
       this.actionDetail = Object.assign({}, defaultNode)
       this.operationFlags = 0
-      this.isSubmitDisabled = true
     },
 
     append(data) {
@@ -234,7 +239,7 @@ export default {
         })
     },
 
-    getPermissions(applicationId) {
+    getPermission(applicationId) {
       getPermission(applicationId)
         .then(result => {
           if (result.isSuccess) {
@@ -265,7 +270,6 @@ export default {
         0
       )
       this.isSubmitDisabled = true
-      console.log(this.actionDetail)
     },
 
     onNodeChecked() {
@@ -282,7 +286,7 @@ export default {
         .filter(parentCode => parentCode !== node.parentCode)
       this.isSubmitDisabled = false
       this.operationFlags = operationFlagDecode(
-        this.permissions.map(x => x.permission),
+        this.permissions.map(x => x.code),
         this.actionDetail.operationFlag
       )
     }
@@ -329,5 +333,11 @@ export default {
 
 .full-height {
   height: 100%;
+}
+
+.dialog > .el-card {
+  box-shadow: none;
+  border: none;
+  margin-top: -60px;
 }
 </style>

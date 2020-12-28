@@ -15,7 +15,7 @@
       <el-input placeholder="搜尋" prefix-icon="el-icon-search" />
 
       <el-button @click="onItemCreate()">
-        <i class="el-icon-plus"></i>
+        <i class="el-icon-plus" />
       </el-button>
 
       <el-button v-if="isCreating" class="input-button">
@@ -24,7 +24,7 @@
           v-model="value"
           @blur="isCreating = false"
           @keyup.enter.native="handleBlur({ name: value })"
-        ></el-input>
+        />
       </el-button>
 
       <el-button
@@ -41,23 +41,23 @@
         </span>
 
         <el-input
-          :ref="'input' + item.id"
           v-show="item.editable"
+          :ref="'input' + item.id"
           v-model="value"
           @blur="item.editable = false"
           @keyup.enter.native="handleBlur({ id: item.id, name: value })"
-        ></el-input>
+        />
 
         <i
           v-if="item.isHover && item.editable == false"
           class="el-icon-edit"
           @click="onItemUpdate(item)"
-        ></i>
+        />
         <i
           v-if="item.isHover && item.editable == false"
           class="el-icon-delete"
           @click="onItemDelete(item)"
-        ></i>
+        />
       </el-button>
     </div>
   </el-card>
@@ -180,7 +180,7 @@ export default {
 
     handleBlur(item) {
       this.blurEvent = this.isCreating ? this.event.create : this.event.update
-      let data = Object.assign({applicationId: this.$store.state.application.id }, item)
+      const data = Object.assign({ applicationId: this.$store.state.application.id }, item)
       this.blurEvent(data)
         .then(result => {
           this.isCreating = false

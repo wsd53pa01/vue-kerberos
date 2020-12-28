@@ -15,27 +15,27 @@
         border
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" :min-width="20"> </el-table-column>
+        <el-table-column type="selection" :min-width="20" />
         <el-table-column
           v-for="(column, index) in columns"
           :key="index"
           :prop="column.prop"
           :label="column.label"
-        >
-        </el-table-column>
+        />
       </el-table>
     </div>
     <div class="card-footer">
-      <el-button class="restore" :disabled="disabled" @click="restore"
-        >復原</el-button
-      >
+      <el-button
+        class="restore"
+        :disabled="disabled"
+        @click="restore"
+      >復原</el-button>
       <el-button
         type="primary"
         class="submit"
         :disabled="disabled"
         @click="getSelected"
-        >送出</el-button
-      >
+      >送出</el-button>
     </div>
   </el-card>
 </template>
@@ -64,11 +64,6 @@ export default {
       }
     }
   },
-  watch: {
-    data() {
-      this.restore()
-    }
-  },
   data() {
     return {
       selectionItems: [],
@@ -78,6 +73,11 @@ export default {
   computed: {
     checkedColumn() {
       return this.data.filter(x => x.status == 2)
+    }
+  },
+  watch: {
+    data() {
+      this.restore()
     }
   },
   methods: {

@@ -15,15 +15,14 @@
           show: true,
         }
       }]"
-      dialogWidth='400px'
-      :tableData="tableData"
-      :fetchData="getOrganizations"
-      :createOption="createOption"
-      :deleteOption="deleteOption"
-      :updateOption="updateOption"
+      dialog-width="400px"
+      :table-data="tableData"
+      :fetch-data="getOrganizations"
+      :create-option="createOption"
+      :delete-option="deleteOption"
+      :update-option="updateOption"
       :loading="loading"
-    >
-    </Table>
+    />
   </div>
 </template>
 
@@ -33,7 +32,7 @@ import {
   createOrganization,
   updateOrganization,
   deleteOrganization
-  } from '@/api/organization'
+} from '@/api/organization'
 import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
 
@@ -44,8 +43,8 @@ export default {
     Table
   },
   data() {
-    const validateOrganizationName =  (rule, value, callback) => {
-      if(value == '') {
+    const validateOrganizationName = (rule, value, callback) => {
+      if (value == '') {
         callback(new Error('請選擇組織名稱'))
       } else {
         callback()
@@ -53,14 +52,14 @@ export default {
     }
     return {
       tableData: {},
-      //TODO: 換成 api 取得組織
+      // TODO: 換成 api 取得組織
       adOrganizations: (() => {
         const prefixString = ''
-        let result = []
+        const result = []
         for (let i = 0; i <= 10; i++) {
           result.push(prefixString + i)
         }
-        return result;
+        return result
       })(),
       createOption: {
         hidden: false,
@@ -71,7 +70,7 @@ export default {
         event: this.deleteEvent
       },
       updateOption: {
-        hidden:false,
+        hidden: false,
         event: this.updateEvent
       },
       loading: false
@@ -96,8 +95,8 @@ export default {
     },
     updateEvent(data) {
       updateOrganization(data).then((response) => {
-        let findData = this.tableData.list.find(x => x.id == data.id)
-          findData.name = data.name
+        const findData = this.tableData.list.find(x => x.id == data.id)
+        findData.name = data.name
       })
     },
     deleteEvent(row, index) {
