@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { getApplications } from '@/api/application'
+import { getApplication } from '@/api/application'
 
 export default {
   data() {
@@ -50,6 +50,7 @@ export default {
   methods: {
     getApplications() {
       getApplications()
+
         .then((result) => {
           if (result.isSuccess) {
             this.applications = result.data.applications
@@ -73,10 +74,6 @@ export default {
   width: 23.5%;
   padding-top: 20px;
   padding-bottom: 20px;
-}
-
-.el-button:hover {
-  color: #45A1FF;
 }
 
 .el-input {

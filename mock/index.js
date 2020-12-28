@@ -6,10 +6,12 @@ const table = require('./table')
 const organization = require('./organization')
 const permissionTemplate = require('./permission-template')
 const application = require('./application')
-const actions = require('./actions')
-const permissions = require('./permissions')
 const group = require('./group')
 const groupUser = require('./group-user')
+const action = require('./action')
+const permission = require('./permission')
+const role = require('./role')
+const roleGroupRelation = require('./role-group')
 
 
 const mocks = [
@@ -18,10 +20,12 @@ const mocks = [
   ...organization,
   ...permissionTemplate,
   ...application,
-  ...actions,
-  ...permissions,
   ...group,
-  ...groupUser
+  ...groupUser,
+  ...action,
+  ...permission,
+  ...role,
+  ...roleGroupRelation
 ]
 
 // for front mock

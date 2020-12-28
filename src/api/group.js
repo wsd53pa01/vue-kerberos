@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 
+
 export function getAd () {
   return request({
     url: '/group/ad/',
@@ -23,3 +24,10 @@ export function createGroup (data) {
   })
 }
 
+export function deleteGroup(data) {
+  return request({
+    url: '/vue-admin-template/group',
+    method: 'delete',
+    data
+  })
+}

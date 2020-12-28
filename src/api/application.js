@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function getApplications(params) {
+export function getApplication(params) {
   return request({
     url: '/application/',
     method: 'get',
