@@ -32,7 +32,7 @@ export default {
     }
   },
   created() {
-    this.getApplications()
+    this.getApplication()
   },
   mounted() {
     window.addEventListener('resize', this.customApplicationClass)
@@ -42,7 +42,7 @@ export default {
     window.removeEventListener('resize', this.customApplicationClass)
   },
   methods: {
-    getApplications() {
+    getApplication() {
       getApplication()
         .then(result => {
           if (result.isSuccess) {

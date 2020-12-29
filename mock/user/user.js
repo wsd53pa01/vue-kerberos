@@ -3,3 +3,6 @@ const user = [{
   name: 'admin'
 }]
 
+module.exports = {
+  user
+}

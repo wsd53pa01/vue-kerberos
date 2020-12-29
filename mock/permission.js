@@ -90,7 +90,6 @@ module.exports = [
     url: '/vue-admin-template/permission',
     type: 'put',
     response: config => {
-      console.log(config)
       const body = config.body
       return createResult(
         true,
@@ -104,7 +103,6 @@ module.exports = [
     url: '/vue-admin-template/permission',
     type: 'delete',
     response: config => {
-      console.log(config)
       data = data.filter(value => value.id != id)
 
       return createResult(

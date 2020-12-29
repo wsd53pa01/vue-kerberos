@@ -20,6 +20,16 @@ function param2Obj(url) {
   return obj
 }
 
+/**
+ * 將 url 轉換成 regex 可以使用的 url string
+ * @param {String} url
+ */
+function convertRegexUrl(url) {
+  let temp = url.replace(/^\/|\/$/gm, '')
+  return `/${temp.replace(/\//, '\\/')}/`
+}
+
 module.exports = {
-  param2Obj
+  param2Obj,
+  convertRegexUrl
 }

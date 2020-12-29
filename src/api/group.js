@@ -26,7 +26,7 @@ export function createGroup (data) {
 
 export function deleteGroup(data) {
   return request({
-    url: '/vue-admin-template/group',
+    url: '/group/',
     method: 'delete',
     data
   })

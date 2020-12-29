@@ -37,7 +37,7 @@ export default {
     }
   },
   created() {
-    this.getApplications()
+    this.getApplication()
   },
   watch: {
     search() {
@@ -48,9 +48,8 @@ export default {
     }
   },
   methods: {
-    getApplications() {
-      getApplications()
-
+    getApplication() {
+      getApplication()
         .then((result) => {
           if (result.isSuccess) {
             this.applications = result.data.applications

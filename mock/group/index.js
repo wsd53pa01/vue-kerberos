@@ -48,4 +48,32 @@ module.exports = [
       }
     }
   },
+  {
+    url: '/group/',
+    type: 'put',
+    response: config => {
+      const { id, name } = config.body;
+      data.find(x => x.id == id).name = name
+      return {
+        isSuccess: true,
+        message: '修改成功',
+        code: 20000,
+        data: {}
+      }
+    }
+  },
+  {
+    url: "/group/",
+    type: "delete",
+    response: config => {
+      const { id } = config.body
+      data = data.filter(value => value.id != id)
+      return {
+        isSuccess: true,
+        message: '刪除成功',
+        code: 20000,
+        data: {}
+      };
+    }
+  }
 ]

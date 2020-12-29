@@ -12,6 +12,7 @@ import emitter from '@/utils/emitter.js'
 import { getAd, createGroup } from '@/api/group'
 import { tree } from '@/api/group-user'
 import { arrayToNested, addTreeProperty } from '@/utils/treeTable.js'
+import { convertTreeData } from '@/utils'
 
 export default {
   name: 'Group',
@@ -62,7 +63,8 @@ export default {
       this.left.data = response.data
     })
     tree(this.applicationId).then((response) => {
-      this.right.data = response.data
+      this.right.data = convertTreeData(response.data)
+      console.log(this.right.data)
     })
   },
   methods: {

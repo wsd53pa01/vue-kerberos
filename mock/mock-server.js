@@ -33,7 +33,6 @@ function unregisterRoutes() {
 
 // for mock server
 const responseFake = (url, type, respond) => {
-  console.log(url)
   return {
     url: new RegExp(`${process.env.VUE_APP_BASE_API}${url}`),
     type: type || 'get',

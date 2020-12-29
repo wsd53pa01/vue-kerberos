@@ -107,14 +107,8 @@ export default {
     this.loading = true
       deletePermissionTemplate(data).then((response) => {
         this.tableData.list.filter(item => {
-<<<<<<< HEAD
-          if(item.id == data.id)
-            item.name = ''
-      })
-=======
           if (item.id == data.id) { item.name = '' }
         })
->>>>>>> develop
         this.loading = false
       })
     }

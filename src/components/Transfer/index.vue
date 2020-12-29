@@ -10,7 +10,7 @@
     </el-col>
     <el-col :span="2">
       <div class="button-block" type="flex" justify="content-center">
-        <el-button @click="addEvent">加入</el-button>
+        <!-- <el-button @click="addEvent">加入</el-button> -->
       </div>
     </el-col>
     <el-col :span="7">
@@ -44,7 +44,6 @@ export default {
       type: Object
     },
     addEvent: {
-      required: true,
       type: Function
     }
   },
