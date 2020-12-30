@@ -104,7 +104,7 @@ let organizations = {
 
 module.exports = [
   {
-    url: '/organization',
+    url: '/organization/',
     type: 'get',
     response: config => {
       const { name, page = 1, limit = 20 } = config.query
@@ -122,7 +122,7 @@ module.exports = [
       }
     }
   }, {
-    url: '/organization',
+    url: '/organization/',
     type: 'post',
     response: _ => {
       return {
@@ -133,7 +133,7 @@ module.exports = [
       }
     }
   }, {
-    url: '/organization',
+    url: '/organization/',
     type: 'put',
     response: _ => {
       return {
@@ -144,7 +144,7 @@ module.exports = [
       }
     }
   }, {
-    url: '/organization',
+    url: '/organization/',
     type: 'delete',
     response: _ => {
       return {

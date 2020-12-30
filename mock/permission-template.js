@@ -24,7 +24,7 @@ let templateData ={
 
 module.exports = [
   {
-    url: '/permission-template',
+    url: '/permission-template/',
     type: 'get',
     response: config => {
       const { id, name, page = 1, limit = 20 } = config.query
@@ -43,7 +43,7 @@ module.exports = [
       }
     }
   }, {
-    url: '/permission-template',
+    url: '/permission-template/',
     type: 'post',
     response: config => {
       const { name } = config.body
@@ -72,7 +72,7 @@ module.exports = [
       }
     }
   }, {
-    url: '/permission-template',
+    url: '/permission-template/',
     type: 'put',
     response: config => {
       const { id, name } = config.body
@@ -88,7 +88,7 @@ module.exports = [
     }
   }
   , {
-    url: '/permission-template',
+    url: '/permission-template/',
     type: 'delete',
     response: config => {
       const { id } = config.body

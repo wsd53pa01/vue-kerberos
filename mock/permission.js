@@ -98,6 +98,7 @@ module.exports = [
         true,
         '',
         20000,
+        toUpdate
       )
     }
   },
@@ -107,7 +108,11 @@ module.exports = [
     type: 'delete',
     response: config => {
       const { applicationId, id } = config.body
-      data = data.filter(value => value.id != id)
+      data.forEach(element => {
+        if (element.id == id) {
+          element.name = ''
+        }
+      })
 
       return createResult(
         true,

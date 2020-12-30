@@ -109,7 +109,7 @@
               <el-checkbox-group v-model="operationFlags">
                 <el-checkbox
                   v-for="permission in permissions"
-                  :key="permission.code"
+                  :key="permission.id"
                   :label="permission.code"
                 >
                   {{ permission.name }}
@@ -294,8 +294,7 @@ export default {
     },
 
     permissionUpdated() {
-      console.log(this.applicationId);
-      this.getPermission()
+      this.getPermission(this.applicationId)
     }
   }
 }

@@ -32,7 +32,7 @@ export default {
     }
   },
   created() {
-    this.getApplications()
+    this.getApplication()
   },
   mounted() {
     window.addEventListener('resize', this.customApplicationClass)
@@ -42,7 +42,7 @@ export default {
     window.removeEventListener('resize', this.customApplicationClass)
   },
   methods: {
-    getApplications() {
+    getApplication() {
       getApplication()
         .then(result => {
           if (result.isSuccess) {
@@ -57,13 +57,11 @@ export default {
           throw e
         })
     },
-
     setApplicationActive() {
       this.applications.forEach(application => {
         application.isActive = application.id == this.applicationId
       })
     },
-
     onApplicationClick(application) {
       this.$store.commit('application/SET_ID', application.id)
       this.setApplicationActive()

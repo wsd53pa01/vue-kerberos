@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getPermissionTemplate(query) {
   return request({
-    url: '/permission-template',
+    url: '/permission-template/',
     method: 'get',
     params: query
   })
@@ -10,7 +10,7 @@ export function getPermissionTemplate(query) {
 
 export function createPermissionTemplate(data) {
   return request({
-    url: '/permission-template',
+    url: '/permission-template/',
     method: 'post',
     data
   })
@@ -18,7 +18,7 @@ export function createPermissionTemplate(data) {
 
 export function updatePermissionTemplate(data) {
   return request({
-    url: '/permission-template',
+    url: '/permission-template/',
     method: 'put',
     data
   })
@@ -26,7 +26,7 @@ export function updatePermissionTemplate(data) {
 
 export function deletePermissionTemplate(data) {
   return request({
-    url: '/permission-template',
+    url: '/permission-template/',
     method: 'delete',
     data
   })

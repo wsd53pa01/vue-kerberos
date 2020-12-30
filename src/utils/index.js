@@ -115,3 +115,40 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+/**
+ * 將 Array Data 轉換成有階層式的 Tree Data
+ * @param { Array } data Tree 的 Array Data
+ */
+let tree = []
+export function convertTreeData(data) {
+  let root = data.filter((x) => { return x.parentId == null })
+  root.forEach(x => {
+    tree.push({
+      id: x.id,
+      label: x.name,
+      tag: x.tag,
+      checked: false,
+    })
+  })
+  addChild(tree)
+  function addChild(parent) {
+    parent.forEach(x => {
+      let child = data.filter((d) => { return d.parentId == x.id })
+      console.log(child)
+      if (child.length != 0) {
+        x['children'] = []
+        child.forEach( c => {
+          x['children'].push({
+            id: c.id,
+            label: c.name,
+            tag: c.tag,
+            checked: false
+          })
+        })
+        addChild(x['children'])
+      }
+    })
+  }
+  return tree
+}
