@@ -39,7 +39,7 @@ let data = [
 
 module.exports = [
   {
-    url: '/vue-admin-template/permission/',
+    url: '/permission/',
     type: 'get',
     response: config => {
       const { applicationId, name, code } = config.query
@@ -59,7 +59,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/permission/',
+    url: '/permission/',
     type: 'post',
     response: config => {
       const body = config.body
@@ -93,7 +93,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/permission/',
+    url: '/permission/',
     type: 'put',
     response: config => {
       const { id, name } = config.body
@@ -110,7 +110,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/permission/',
+    url: '/permission/',
     type: 'delete',
     response: config => {
       const { applicationId, id } = config.body

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getPermission({ applicationId, name, code }) {
   return request({
-    url: '/vue-admin-template/permission/',
+    url: '/permission/',
     method: 'get',
     params: { applicationId, name, code }
   })
@@ -10,7 +10,7 @@ export function getPermission({ applicationId, name, code }) {
 
 export function createPermission(data) {
   return request({
-    url: '/vue-admin-template/permission/',
+    url: '/permission/',
     method: 'post',
     data
   })
@@ -18,7 +18,7 @@ export function createPermission(data) {
 
 export function updatePermission(data) {
   return request({
-    url: '/vue-admin-template/permission/',
+    url: '/permission/',
     method: 'put',
     data
   })
@@ -26,7 +26,7 @@ export function updatePermission(data) {
 
 export function deletePermission(data) {
   return request({
-    url: '/vue-admin-template/permission/',
+    url: '/permission/',
     method: 'delete',
     data
   })

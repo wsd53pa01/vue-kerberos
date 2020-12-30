@@ -1,6 +1,6 @@
 module.exports = [
   {
-    url: '/application',
+    url: '/application/',
     type: 'get',
     response: _ => {
       return {
@@ -18,7 +18,7 @@ module.exports = [
       }
     }
   }, {
-    url: '/application',
+    url: '/application/',
     type: 'post',
     response: config => {
       const { name } = config.body
