@@ -33,7 +33,7 @@ let data = [
 
 module.exports = [
   {
-    url: "/vue-admin-template/role",
+    url: "/role/",
     type: "get",
     response: config => {
       const { applicationId } = config.query
@@ -49,7 +49,7 @@ module.exports = [
   },
 
   {
-    url: "/vue-admin-template/role",
+    url: "/role/",
     type: "post",
     response: config => {
       const body = config.body;
@@ -66,7 +66,7 @@ module.exports = [
   },
 
   {
-    url: "/vue-admin-template/role",
+    url: "/role/",
     type: "put",
     response: config => {
       const { id, name } = config.body;
@@ -82,7 +82,7 @@ module.exports = [
   },
 
   {
-    url: "/vue-admin-template/role",
+    url: "/role/",
     type: "delete",
     response: config => {
       const { id } = config.body
