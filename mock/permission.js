@@ -42,12 +42,18 @@ module.exports = [
     url: '/vue-admin-template/permission/',
     type: 'get',
     response: config => {
-      const { applicationId } = config.query
+      const { applicationId, name, code } = config.query
+      const filterPermission = data.filter(x => {
+        const filterApplication = x.applicationId == applicationId
+        const filterName = x.name.includes(name) || name === '' || name == null
+        const filterCode = x.code == code || code == '' || code == null
+        return filterApplication && filterName && filterCode
+      })
       return createResult(
         true,
         '',
         20000,
-        data.filter(x => x.applicationId == applicationId)
+        filterPermission
       )
     }
   },

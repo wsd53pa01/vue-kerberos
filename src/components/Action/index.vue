@@ -111,6 +111,7 @@
                   v-for="permission in permissions"
                   :key="permission.id"
                   :label="permission.code"
+                  :disabled="isSubmitDisabled"
                 >
                   {{ permission.name }}
                 </el-checkbox>
@@ -202,6 +203,7 @@ export default {
       this.actionDetail = Object.assign({}, defaultNode)
       this.operationFlags = 0
       this.isPermissionDisabled = applicationId == null || applicationId == ''
+      this.isSubmitDisabled = true
     },
 
     append(data) {
@@ -242,7 +244,7 @@ export default {
     },
 
     getPermission(applicationId) {
-      getPermission(applicationId)
+      getPermission({ applicationId })
         .then(result => {
           if (result.isSuccess) {
             this.permissions = result.data
@@ -271,7 +273,11 @@ export default {
         (prev, curr) => prev + curr,
         0
       )
-      this.isSubmitDisabled = true
+      this.$notify({
+        title: 'Warning',
+        message: '還沒寫submit api',
+        type: 'warning'
+      })
     },
 
     onNodeChecked() {
