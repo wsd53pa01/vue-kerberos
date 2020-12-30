@@ -39,7 +39,7 @@ let data = [
 
 module.exports = [
   {
-    url: '/vue-admin-template/permission',
+    url: '/vue-admin-template/permission/',
     type: 'get',
     response: config => {
       const { applicationId } = config.query
@@ -53,7 +53,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/permission',
+    url: '/vue-admin-template/permission/',
     type: 'post',
     response: config => {
       const body = config.body
@@ -87,11 +87,13 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/permission',
+    url: '/vue-admin-template/permission/',
     type: 'put',
     response: config => {
-      console.log(config)
-      const body = config.body
+      const { id, name } = config.body
+
+      const toUpdate = data.find(x => x.id == id)
+      toUpdate.name = name
       return createResult(
         true,
         '',
@@ -101,10 +103,10 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/permission',
+    url: '/vue-admin-template/permission/',
     type: 'delete',
     response: config => {
-      console.log(config)
+      const { applicationId, id } = config.body
       data = data.filter(value => value.id != id)
 
       return createResult(

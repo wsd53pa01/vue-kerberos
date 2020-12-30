@@ -44,6 +44,10 @@ import {
   deletePermission
 } from '@/api/permission'
 
+const emit = {
+  dmlFinished: 'dmlFinished'
+}
+
 export default {
   components: {
     Table
@@ -74,6 +78,14 @@ export default {
       }
     }
   },
+  watch: {
+    permissions(newVal, oldVal) {
+      this.tableData = {
+        list: newVal,
+        total: newVal.length
+      }
+    }
+  },
   created() {
     this.tableData = {
       list: this.permissions,
@@ -87,7 +99,7 @@ export default {
       createPermission({ applicationId, ...data })
         .then(response => {
           if (response.isSuccess) {
-            console.log('todo: add permissions')
+            this.$emit(emit.dmlFinished, response.data)
           }
         })
         .catch(err => {
@@ -103,7 +115,7 @@ export default {
       updatePermission(data)
         .then(response => {
           if (response.isSuccess) {
-            console.log('todo: update permissions')
+            this.$emit(emit.dmlFinished, response.data)
           }
         })
         .catch(err => {
@@ -119,7 +131,7 @@ export default {
       deletePermission(data)
         .then(response => {
           if (response.isSuccess) {
-            console.log('todo: delete permissions')
+            this.$emit(emit.dmlFinished, response.data)
           }
         })
         .catch(err => {

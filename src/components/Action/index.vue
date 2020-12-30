@@ -135,6 +135,7 @@
     <el-dialog title="操作功能管理" :visible.sync="isPermissionVisible" width="900px">
       <permission
         :permissions="permissions"
+        @dmlFinished="permissionUpdated"
       />
     </el-dialog>
   </div>
@@ -182,12 +183,12 @@ export default {
   },
   computed: {
     applicationId() {
-      return this.$store.state.application.id
+      const applicationId = this.$store.state.application.id
+      return applicationId
     }
   },
   watch: {
     applicationId: function(newVal, oldVal) {
-      this.isPermissionDisabled = !newVal
       this.renderPage(newVal)
     }
   },
@@ -200,6 +201,7 @@ export default {
       this.getPermission(applicationId)
       this.actionDetail = Object.assign({}, defaultNode)
       this.operationFlags = 0
+      this.isPermissionDisabled = applicationId == null || applicationId == ''
     },
 
     append(data) {
@@ -289,6 +291,11 @@ export default {
         this.permissions.map(x => x.code),
         this.actionDetail.operationFlag
       )
+    },
+
+    permissionUpdated() {
+      console.log(this.applicationId);
+      this.getPermission()
     }
   }
 }
