@@ -3,7 +3,7 @@
     class="dialog"
     :fields="[
       {
-        prop: 'code',
+        prop: 'operationFlag',
         label: '代碼',
         width: '180',
         dialog: {

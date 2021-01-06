@@ -15,3 +15,18 @@ export function createApplication(data) {
     data
   })
 }
+
+export function updateApplication(data) {
+  return request({
+    url: '/application/',
+    method: 'put',
+    data
+  })
+}
+export function deleteApplication(data) {
+  return request({
+    url: '/application/',
+    method: 'delete',
+    data
+  })
+}

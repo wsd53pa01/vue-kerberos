@@ -18,11 +18,11 @@
       <span slot-scope="{ node, data }">
         <div v-if="node.data.update == true">
           <el-input
-            class="tree-input"
             v-model="input"
+            class="tree-input"
             autofocus="true"
             @change="changeNode(node, data) "
-          ></el-input>
+          />
         </div>
         <div v-else>
           <span>{{ node.label }}</span>
@@ -51,7 +51,7 @@ export default {
         }
       }
       // default: false,
-    },
+    }
   },
   data() {
     return {
@@ -76,7 +76,7 @@ export default {
       this.input = ''
       this.createOption.event(node)
     }
-  },
+  }
 }
 </script>
 

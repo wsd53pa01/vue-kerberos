@@ -2,7 +2,13 @@
   <div class="app-container">
     <el-row :gutter="20">
       <el-col :span="6">
-        <application-card />
+        <card-list-button
+          title="應用程式列表"
+          :data="applications"
+          button-layout="horizontal"
+          :searchable="true"
+          @onClick="onApplicationClick"
+        />
       </el-col>
       <el-col :span="6">
         <condition
@@ -28,17 +34,19 @@
 </template>
 
 <script>
-import ApplicationCard from '@/components/ApplicationCard'
+import CardListButton from '@/components/CardListButton'
 import Condition from './Condition'
 import Result from './Result'
+import { getApplication } from '@/api/application'
 import { getRole, createRole, updateRole, deleteRole } from '@/api/role'
 import { getGroup, createGroup, updateGroup, deleteGroup } from '@/api/group'
 import { getRelation, createRelation } from '@/api/role-group'
 
 export default {
-  components: { ApplicationCard, Condition, Result },
+  components: { CardListButton, Condition, Result },
   data() {
     return {
+      applications: [],
       isByRole: true,
       condition: {
         title: '',
@@ -91,6 +99,7 @@ export default {
     }
   },
   created() {
+    this.getApplication()
     this.refreshPage()
   },
   methods: {
@@ -112,11 +121,26 @@ export default {
       })
     },
 
+    getApplication() {
+      getApplication()
+        .then(response => {
+          if (response.isSuccess) {
+            response.data.forEach(x => {
+              const obj = Object.assign({ isActive: x.id == this.applicationId }, x)
+              this.applications.push(obj)
+            })
+          }
+        })
+        .catch(err => {
+          throw err
+        })
+    },
+
     getRole() {
       return getRole(this.applicationId)
         .then(result => {
           if (result.isSuccess) {
-            this.roles.data = result.data.roles
+            this.roles.data = result.data
           }
         })
         .catch(err => {
@@ -126,9 +150,9 @@ export default {
 
     getGroup() {
       return getGroup(this.applicationId)
-        .then(result => {
-          if (result.isSuccess) {
-            this.groups.data = result.data.groups
+        .then(response => {
+          if (response.isSuccess) {
+            this.groups.data = response.data
           }
         })
         .catch(err => {
@@ -201,12 +225,16 @@ export default {
         toCreate.push(element)
       })
 
-      createRelation(toCreate).then(x => {
-        if (x.isSuccess) {
+      createRelation(toCreate).then(response => {
+        if (response.isSuccess) {
           this.getRelation(this.currentItemId)
-          this.success(apiResponse.message)
+          this.success(response.message)
         }
       })
+    },
+
+    onApplicationClick(item) {
+      this.$store.commit('application/SET_ID', item.id)
     },
 
     success(message) {

@@ -1,86 +1,101 @@
 <template>
   <div class="app-container">
-    <el-card class="box-card">
-      <h1 slot="header">應用程式列表</h1>
-      <el-input
-        v-model="search"
-        placeholder="搜尋"
-        prefix-icon="el-icon-search"
-      />
-      <el-row>
-        <router-link :to="'/boards/creation'">
-          <el-button>
-            <svg-icon icon-class="add" />
-          </el-button>
-        </router-link>
-        <el-button
-          v-for="application in list"
-          :key="application.id"
-          @click="directUrl(application.id)"
-        >
-          {{ application.name }}
-        </el-button>
-      </el-row>
-    </el-card>
+    <card-list-button
+      title="應用程式列表"
+      :searchable="true"
+      :data="applications"
+      :has-create="true"
+      :custom-create="true"
+      :has-update="true"
+      :has-delete="true"
+      @onClick="onClick"
+      @createEvent="createApplication"
+      @updateEvent="updateApplication"
+      @deleteEvent="deleteApplication"
+    />
   </div>
 </template>
 
 <script>
-import { getApplication } from '@/api/application'
+import CardListButton from '@/components/CardListButton'
+import {
+  getApplication,
+  updateApplication,
+  deleteApplication
+} from '@/api/application'
 
 export default {
+  components: { CardListButton },
   data() {
     return {
-      applications: [],
-      search: '',
-      list: []
+      applications: []
     }
   },
   created() {
     this.getApplication()
   },
-  watch: {
-    search() {
-      this.list = this.applications.filter(item => {
-        if (this.search && item.name.indexOf(this.search) < 0) return false
-        return true
-      })
-    }
-  },
   methods: {
     getApplication() {
       getApplication()
-        .then((result) => {
+        .then(result => {
           if (result.isSuccess) {
-            this.applications = result.data.applications
-            this.list = this.applications
+            this.applications = result.data
           }
-        }).catch((err) => {
+        })
+        .catch(err => {
           throw err
         })
     },
-    directUrl(applicationId) {
-      this.$store.commit('application/SET_ID', applicationId)
-      this.$router.push({ path: 'actions' })
+
+    onClick(item) {
+      this.$store.commit('application/SET_ID', item.id)
+      this.$router.push({ path: '/actions' })
     },
+
+    createApplication() {
+      this.$router.push({ path: '/boards/creation' })
+    },
+
+    updateApplication(item) {
+      const data = {
+        id: item.id,
+        name: item.name
+      }
+      updateApplication(data).then(response => {
+        if (response.isSuccess) {
+          this.getApplication()
+          this.notifySuccess('更新成功', response.message)
+        }
+      })
+    },
+
+    deleteApplication(item) {
+      console.log(item)
+      const data = {
+        id: item.id
+      }
+      deleteApplication(data).then(response => {
+        if (response.isSuccess) {
+          this.getApplication()
+          this.notifySuccess('刪除成功', response.message)
+        }
+      })
+    },
+
+    notifySuccess(title, message) {
+      this.$notify({
+        title,
+        message,
+        type: 'success'
+      })
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.el-button {
-  margin: .4rem;
-  width: 23.5%;
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-
-.el-input {
-  margin: .4rem;
-}
-
 h1 {
-  margin: .3rem;
+  margin: 0.3rem;
 }
 </style>
 

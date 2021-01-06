@@ -110,7 +110,7 @@
                 <el-checkbox
                   v-for="permission in permissions"
                   :key="permission.id"
-                  :label="permission.code"
+                  :label="permission.operationFlag"
                   :disabled="isSubmitDisabled"
                 >
                   {{ permission.name }}
@@ -152,6 +152,7 @@ import {
 import { getPermission } from '@/api/permission'
 import { operationFlagDecode } from '@/utils/operationFlag'
 import Permission from './Permission'
+import { CheckboxGroup } from 'element-ui'
 
 const defaultNode = {
   applicationId: 0,
@@ -246,6 +247,7 @@ export default {
     getPermission(applicationId) {
       getPermission({ applicationId })
         .then(result => {
+          console.log(result);
           if (result.isSuccess) {
             this.permissions = result.data
           }
@@ -294,7 +296,7 @@ export default {
         .filter(parentCode => parentCode !== node.parentCode)
       this.isSubmitDisabled = false
       this.operationFlags = operationFlagDecode(
-        this.permissions.map(x => x.code),
+        this.permissions.map(x => x.operationFlag),
         this.actionDetail.operationFlag
       )
     },

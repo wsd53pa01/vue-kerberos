@@ -3,37 +3,37 @@ let data = [
     id: 1,
     applicationId: 1,
     name: '新增',
-    code: 1
+    operationFlag: 1
   },
   {
     id: 2,
     applicationId: 1,
     name: '刪除',
-    code: 2
+    operationFlag: 2
   },
   {
     id: 3,
     applicationId: 1,
     name: '修改',
-    code: 4
+    operationFlag: 4
   },
   {
     id: 4,
     applicationId: 1,
     name: '查詢',
-    code: 8
+    operationFlag: 8
   },
   {
     id: 5,
     applicationId: 2,
     name: '新增eip',
-    code: 1
+    operationFlag: 1
   },
   {
     id: 6,
     applicationId: 2,
     name: '刪除eip',
-    code: 2
+    operationFlag: 2
   }
 ]
 
@@ -42,12 +42,12 @@ module.exports = [
     url: '/permission/',
     type: 'get',
     response: config => {
-      const { applicationId, name, code } = config.query
+      const { applicationId, name, operationFlag } = config.query
       const filterPermission = data.filter(x => {
         const filterApplication = x.applicationId == applicationId
         const filterName = x.name.includes(name) || name === '' || name == null
-        const filterCode = x.code == code || code == '' || code == null
-        return filterApplication && filterName && filterCode
+        const filteroperationFlag = x.operationFlag == operationFlag || operationFlag == '' || operationFlag == null
+        return filterApplication && filterName && filteroperationFlag
       })
       return createResult(
         true,
@@ -76,7 +76,7 @@ module.exports = [
       const emptyPermission = data.filter(x => x.applicationId == body.applicationId && !x.name)
       if (emptyPermission.length === 0) {
         body.id = Math.max(...data.map(x => x.id)) + 1
-        body.code = Math.max(...data.map(x => x.code)) * 2
+        body.operationFlag = Math.max(...data.map(x => x.operationFlag)) * 2
         data.push(body)
       } else {
         body.id = emptyPermission[0].id

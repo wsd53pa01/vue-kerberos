@@ -57,7 +57,7 @@ export const constantRoutes = [
         path: 'creation',
         name: 'Creation',
         component: () => import('@/views/boards/creation'),
-        meta: { title: '新增應用程式', noCache: true, activeMenu: '/boards'},
+        meta: { title: '新增應用程式', noCache: true, activeMenu: '/boards' },
         hidden: true
       }
     ]

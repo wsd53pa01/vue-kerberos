@@ -12,7 +12,7 @@ const action = require('./action')
 const permission = require('./permission')
 const role = require('./role')
 const roleGroupRelation = require('./role-group')
-
+const rolePermission = require('./role-permission/index')
 
 const mocks = [
   ...user,
@@ -25,7 +25,8 @@ const mocks = [
   ...action,
   ...permission,
   ...role,
-  ...roleGroupRelation
+  ...roleGroupRelation,
+  ...rolePermission
 ]
 
 // for front mock

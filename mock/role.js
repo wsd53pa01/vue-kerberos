@@ -2,33 +2,43 @@ let data = [
   {
     applicationId: 1,
     id: 1,
-    name: "Administrator",
+    name: "Administrator"
   },
   {
     applicationId: 1,
     id: 2,
-    name: "Developer",
+    name: "Developer"
   },
   {
     applicationId: 2,
     id: 3,
-    name: "RoleA",
+    name: "RoleA"
   },
   {
     applicationId: 2,
     id: 4,
-    name: "RoleB",
+    name: "RoleB"
   },
   {
     applicationId: 2,
     id: 5,
-    name: "RoleC",
+    name: "RoleC"
   },
   {
     applicationId: 2,
     id: 6,
-    name: "RoleD",
+    name: "RoleD"
   },
+  {
+    applicationId: 3,
+    id: 5,
+    name: "RoleC"
+  },
+  {
+    applicationId: 3,
+    id: 6,
+    name: "RoleD"
+  }
 ];
 
 module.exports = [
@@ -36,14 +46,12 @@ module.exports = [
     url: "/role/",
     type: "get",
     response: config => {
-      const { applicationId } = config.query
-      
+      const { applicationId } = config.query;
+
       return {
         isSuccess: true,
         code: 20000,
-        data: {
-          roles: data.filter(x => x.applicationId == applicationId)
-        }
+        data: data.filter(x => x.applicationId == applicationId)
       };
     }
   },
@@ -53,12 +61,12 @@ module.exports = [
     type: "post",
     response: config => {
       const body = config.body;
-      body.id = Math.max(...data.map(x => x.id)) + 1
-      data.push(body)
-      
+      body.id = Math.max(...data.map(x => x.id)) + 1;
+      data.push(body);
+
       return {
         isSuccess: true,
-        message: '新增成功',
+        message: "新增成功",
         code: 20000,
         data: {}
       };
@@ -70,11 +78,11 @@ module.exports = [
     type: "put",
     response: config => {
       const { id, name } = config.body;
-      data.find(x => x.id == id).name = name
-      
+      data.find(x => x.id == id).name = name;
+
       return {
         isSuccess: true,
-        message: '修改成功',
+        message: "修改成功",
         code: 20000,
         data: {}
       };
@@ -85,12 +93,12 @@ module.exports = [
     url: "/role/",
     type: "delete",
     response: config => {
-      const { id } = config.body
-      data = data.filter(value => value.id != id)
+      const { id } = config.body;
+      data = data.filter(value => value.id != id);
 
       return {
         isSuccess: true,
-        message: '刪除成功',
+        message: "刪除成功",
         code: 20000,
         data: {}
       };

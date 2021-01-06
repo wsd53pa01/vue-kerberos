@@ -1,14 +1,13 @@
 import request from '@/utils/request'
 
-
-export function getAd () {
+export function getAd() {
   return request({
     url: '/group/ad/',
     method: 'get'
   })
 }
 
-export function getGroup (applicationId) {
+export function getGroup(applicationId) {
   return request({
     url: '/group/',
     method: 'get',
@@ -16,7 +15,7 @@ export function getGroup (applicationId) {
   })
 }
 
-export function createGroup (data) {
+export function createGroup(data) {
   return request({
     url: '/group/',
     method: 'post',
@@ -24,7 +23,7 @@ export function createGroup (data) {
   })
 }
 
-export function updateGroup (data) {
+export function updateGroup(data) {
   return request({
     url: '/group/',
     method: 'put',

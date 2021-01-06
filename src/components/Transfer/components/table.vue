@@ -53,11 +53,10 @@
             type="text"
             icon="el-icon-plus"
             @click="createRoot"
-          >
-          </el-button>
+          />
         </template>
         <template slot-scope="scope">
-          <el-button type="text" icon="el-icon-plus"></el-button>
+          <el-button type="text" icon="el-icon-plus" />
         </template>
       </el-table-column>
     </el-table>
@@ -87,27 +86,27 @@ export default {
   },
   methods: {
     createRoot() {
-      this.data.unshift({ id: 0, name: '', state: 'update'})
+      this.data.unshift({ id: 0, name: '', state: 'update' })
     },
     checkOne(obj, boolValue) {
       obj.checked = boolValue
       if (obj.children) {
-          obj.children.forEach(item => this.checkOne(item, boolValue))
+        obj.children.forEach(item => this.checkOne(item, boolValue))
       }
     },
     handleCheckedOne(row) {
       if (row.checked) {
-          this.checkOne(row, true)
+        this.checkOne(row, true)
       } else {
-          this.checkOne(row, false)
+        this.checkOne(row, false)
       }
     },
     checkAll(arr, boolValue) {
       arr.forEach(item => {
-          item.checked = boolValue
-          if (item.children) {
-            this.checkAll(item.children, boolValue)
-          }
+        item.checked = boolValue
+        if (item.children) {
+          this.checkAll(item.children, boolValue)
+        }
       })
     },
     handleCheckedAll(scope) {
@@ -116,8 +115,8 @@ export default {
       } else {
         this.checkAll(this.data, false)
       }
-    },
-  },
+    }
+  }
 }
 </script>
 
