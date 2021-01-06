@@ -1,12 +1,16 @@
 <template>
-  <el-table :data="dataSource">
-    <el-table-column min-width="150px" align="center" width="80">
+  <el-table :data="dataSource" height="100%">
+    <el-table-column min-width="80px" width="100" align="center">
       <template slot-scope="scope">
         <span>{{ scope.row.name }}</span>
       </template>
     </el-table-column>
 
-    <el-table-column label="全選" min-width="150px" width="80" align="center">
+    <el-table-column
+      label="全選"
+      :min-width="header.length > 4 ? null : 20"
+      align="center"
+    >
       <template slot-scope="scope">
         <el-checkbox
           v-model="scope.row['checkedAll' + scope.$index]"
@@ -20,9 +24,8 @@
     <el-table-column
       v-for="item in header"
       :key="item.id"
-      min-width="150px"
+      :min-width="header.length > 4 ? null : 20"
       align="center"
-      width="80"
       :label="item.name"
     >
       <template slot-scope="scope">
@@ -138,7 +141,9 @@ export default {
       ).every(x => x === true)
 
       this.headColumnIds.forEach(headColumnId => {
-        this.dataSource[index][checkedColumnBaseId + index] = !isCheckedAllColumnBox
+        this.dataSource[index][
+          checkedColumnBaseId + index
+        ] = !isCheckedAllColumnBox
         this.dataSource[index].checked[headColumnId] = !isCheckedAllColumnBox
       })
 
@@ -212,7 +217,10 @@ export default {
      */
     checkedAllRow() {
       this.headColumnIds.forEach(headColumnId => {
-        const isRowCheckboxChecked = this.dataSource.filter((value, index) => index !== 0).map(x => x.checked[headColumnId]).every(x => x === true)
+        const isRowCheckboxChecked = this.dataSource
+          .filter((value, index) => index !== 0)
+          .map(x => x.checked[headColumnId])
+          .every(x => x === true)
         this.dataSource[0].checked[headColumnId] = isRowCheckboxChecked
       })
     },
@@ -221,17 +229,32 @@ export default {
      * 回傳選擇的資料，在每次勾選checkbox時回傳
      */
     returnCheckedData() {
-      const checkedData = this.dataSource.filter((value, index) => {
-        return index !== 0 && this.headColumnIds.filter(headColumnId => value.checked[headColumnId]).length > 0
-      }).map(value => {
-        return {
-          id: value.id,
-          name: value.name,
-          checked: this.headColumnIds.filter(headColumnId => value.checked[headColumnId])
-        }
-      })
+      const checkedData = this.dataSource
+        .filter((value, index) => {
+          return (
+            index !== 0 &&
+            this.headColumnIds.filter(
+              headColumnId => value.checked[headColumnId]
+            ).length > 0
+          )
+        })
+        .map(value => {
+          return {
+            id: value.id,
+            name: value.name,
+            checked: this.headColumnIds.filter(
+              headColumnId => value.checked[headColumnId]
+            )
+          }
+        })
       this.$emit('getCheckedData', checkedData)
     }
   }
 }
 </script>
+
+<style lang="scss">
+.el-table {
+  width: 100%;
+}
+</style>

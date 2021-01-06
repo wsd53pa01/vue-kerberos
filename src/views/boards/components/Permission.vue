@@ -12,11 +12,14 @@
         <Tree name="功能列表" :data="actions" />
       </el-col>
       <el-col :span="12">
-        <checkbox-data-grid
-          :data="checkboxGrid.rolePermission"
-          :header="checkboxGrid.permission"
-          @getCheckedData="onCheckboxClick"
-        />
+        <el-card class="permission-card">
+          <div slot="header" class="card-header">角色權限列表</div>
+          <checkbox-data-grid
+            :data="checkboxGrid.rolePermission"
+            :header="checkboxGrid.permission"
+            @getCheckedData="onCheckboxClick"
+          />
+        </el-card>
       </el-col>
     </el-row>
   </div>
@@ -31,6 +34,7 @@ import { getAction } from '@/api/action'
 import { getPermission } from '@/api/permission'
 import { getRolePermission, createRolePermission } from '@/api/role-permission'
 import { operationFlagDecode } from '@/utils/operationFlag'
+import emitter from '@/utils/emitter.js'
 
 export default {
   name: 'Permission',
@@ -61,9 +65,25 @@ export default {
 
     permissions() {
       return this.checkboxGrid.permission.map(x => x.id)
+    },
+    active: {
+      get() {
+        return this.$store.state.creation.active
+      },
+      set(val) {
+        this.$store.dispatch('creation/setActive', val)
+      }
     }
   },
+  beforeCreate() {
+    // emitter.$offAll(['next', 'previous'])
+  },
+  destroyed() {
+    // emitter.$offAll(['next', 'previous'])
+  },
   created() {
+    // emitter.$on('next', this.createRolePermission)
+    // emitter.$on('previous', () => { this.active -= 1 })
     this.getRole()
     this.getAction()
     this.getPermission()
@@ -110,7 +130,7 @@ export default {
         {
           id: 4,
           name: '操作4'
-        }
+        },
       ]
       // getPermission(this.applicationId)
       //   .then(response => {
@@ -207,6 +227,10 @@ export default {
           operationFlag: element.checked.reduce((acc, cur) => acc + cur)
         }
       })
+    },
+
+    restoreData() {
+      this.checkboxGrid.rolePermission = [...this.checkboxGrid.rolePermission]
     }
   }
 }
@@ -222,8 +246,21 @@ export default {
 .el-col {
   border-radius: 4px;
 }
-
-.role-card {
+.card-role {
   box-shadow: none;
+}
+
+.permission-card {
+  box-shadow: none;
+  height: calc(100vh - 380px);
+  min-height: 320px;
+}
+
+.permission-card::v-deep > .el-card__body {
+  overflow: hidden !important;
+}
+
+.card-header {
+  text-align: center;
 }
 </style>
