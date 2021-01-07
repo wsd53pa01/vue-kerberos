@@ -24,6 +24,14 @@ export function createGroup (data) {
   })
 }
 
+export function updateGroup (data) {
+  return request({
+    url: '/group/',
+    method: 'put',
+    data
+  })
+}
+
 export function deleteGroup(data) {
   return request({
     url: '/group/',

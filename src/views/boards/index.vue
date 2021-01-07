@@ -8,7 +8,7 @@
         prefix-icon="el-icon-search"
       />
       <el-row>
-        <router-link :to="'/boards/creation'">
+        <router-link :to="'/boards/process'">
           <el-button>
             <svg-icon icon-class="add" />
           </el-button>
