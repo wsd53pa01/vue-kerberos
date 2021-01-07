@@ -7,7 +7,7 @@ module.exports = [
     url: '/application/',
     type: 'get',
     response: _ => {
-      let data = { applications: application }
+      let data = application
       return {
         isSuccess: true,
         code: 20000,
@@ -46,5 +46,34 @@ module.exports = [
         data
       }
     }
-  }
+  },
+
+  {
+    url: '/application/',
+    type: 'put',
+    response: config => {
+      const body = config.body
+      const app = application.find(value => value.id == body.id)
+      app.name = body.name
+      return {
+        isSuccess: true,
+        code: 20000,
+        body
+      }
+    }
+  },
+
+  {
+    url: '/application/',
+    type: 'delete',
+    response: config => {
+      const { id } = config.body
+      application = application.filter(value => value.id != id)
+      return {
+        isSuccess: true,
+        code: 20000,
+        application
+      }
+    }
+  },
 ]
