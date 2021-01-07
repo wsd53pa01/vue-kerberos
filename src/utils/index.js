@@ -120,35 +120,36 @@ export function param2Obj(url) {
  * 將 Array Data 轉換成有階層式的 Tree Data
  * @param { Array } data Tree 的 Array Data
  */
-const tree = []
 export function convertTreeData(data) {
-  const root = data.filter((x) => { return x.parentId == null })
+  let tree = []
+  let root = data.filter((x) => { return x.parentId == null })
   root.forEach(x => {
-    tree.push({
-      id: x.id,
-      label: x.name,
-      tag: x.tag,
-      checked: false
-    })
+    tree.push(formatObj(x))
   })
   addChild(tree)
   function addChild(parent) {
     parent.forEach(x => {
-      const child = data.filter((d) => { return d.parentId == x.id })
-      console.log(child)
+      let child = data.filter((d) => { return d.parentId == x.id })
       if (child.length != 0) {
         x['children'] = []
-        child.forEach(c => {
-          x['children'].push({
-            id: c.id,
-            label: c.name,
-            tag: c.tag,
-            checked: false
-          })
+        child.forEach( c => {
+          x['children'].push(formatObj(c))
         })
         addChild(x['children'])
       }
     })
+  }
+  function formatObj(data) {
+    return {
+      id: data.id,
+      data_id: data.data_id,
+      label: data.name,
+      tag: data.tag,
+      checked: false,
+      createVisible: data.createVisible | false,
+      updateVisible: data.updateVisible | false,
+      deleteVisible: data.deleteVisible | false
+    }
   }
   return tree
 }

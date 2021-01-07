@@ -23,6 +23,7 @@ export function createGroup(data) {
   })
 }
 
+
 export function updateGroup(data) {
   return request({
     url: '/group/',

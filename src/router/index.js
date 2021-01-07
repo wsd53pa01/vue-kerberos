@@ -54,10 +54,10 @@ export const constantRoutes = [
         meta: { title: '應用程式看板', icon: 'dashboard' }
       },
       {
-        path: 'creation',
-        name: 'Creation',
-        component: () => import('@/views/boards/creation'),
-        meta: { title: '新增應用程式', noCache: true, activeMenu: '/boards' },
+        path: 'process',
+        name: 'Process',
+        component: () => import('@/views/boards/process'),
+        meta: { title: '新增應用程式', noCache: true, activeMenu: '/boards'},
         hidden: true
       }
     ]

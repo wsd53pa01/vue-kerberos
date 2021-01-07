@@ -1,8 +1,4 @@
-const groupUser = [{
-  id: 1,
-  groupId: 1,
-  userId: 1,
-}]
+const groupUser = []
 
 module.exports = {
   groupUser
