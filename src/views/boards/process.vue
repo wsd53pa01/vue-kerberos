@@ -13,7 +13,7 @@
         </el-header>
         <el-main>
           <keep-alive>
-            <componnet :is="main" />
+            <component :is="main"></component>
           </keep-alive>
         </el-main>
         <el-footer>
@@ -36,7 +36,7 @@
 
 <script>
 import Application from './components/Application'
-import Group from './components/Group'
+import Group from '@/components/Group'
 import Role from './components/Role'
 import Action from './components/Action'
 import Permission from './components/Permission'
@@ -81,7 +81,7 @@ export default {
   computed: {
     active: {
       get() {
-        const value = this.$store.state.creation.active
+        let value = this.$store.state.process.active
         if (value < this.step.length) {
           this.title = this.step[value].title
           this.main = this.step[value].component
@@ -89,7 +89,7 @@ export default {
         return value
       },
       set(val) {
-        this.$store.dispatch('creation/setActive', val)
+        this.$store.dispatch('process/setActive', val)
       }
     }
   },

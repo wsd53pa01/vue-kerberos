@@ -1,5 +1,27 @@
 <template>
   <div class="app-container">
+    <el-card class="box-card">
+      <h1 slot="header">應用程式列表</h1>
+      <el-input
+        v-model="search"
+        placeholder="搜尋"
+        prefix-icon="el-icon-search"
+      />
+      <el-row>
+        <router-link :to="'/boards/process'">
+          <el-button>
+            <svg-icon icon-class="add" />
+          </el-button>
+        </router-link>
+        <el-button
+          v-for="application in list"
+          :key="application.id"
+          @click="directUrl(application.id)"
+        >
+          {{ application.name }}
+        </el-button>
+      </el-row>
+    </el-card>
     <card-list-button
       title="應用程式列表"
       :searchable="true"

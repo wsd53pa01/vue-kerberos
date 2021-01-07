@@ -37,17 +37,15 @@ export default {
       rule: {
         name: [{ required: true, trigger: 'blur', validator: validateInput }]
       },
-      name: '',
-      id: null
     }
   },
   computed: {
     active: {
       get() {
-        return this.$store.state.creation.active
+        return this.$store.state.process.active
       },
       set(val) {
-        this.$store.dispatch('creation/setActive', val)
+        this.$store.dispatch('process/setActive', val)
       }
     }
   },
@@ -65,9 +63,10 @@ export default {
     handleApplication() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          const data = { id: this.id, name: this.name }
+          let data = { name: this.model.name }
           createApplication(data).then((response) => {
-            this.$store.dispatch('creation/setApplicationId', response.data.id)
+            console.log(response.data.id)
+            this.$store.dispatch('process/setApplicationId', response.data.id)
             this.active += 1
           })
         }

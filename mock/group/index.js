@@ -1,6 +1,4 @@
 const { adData, group } = require('./group.js')
-let tempId = Number.MAX_VALUE
-
 
 module.exports = [
   {
@@ -20,8 +18,7 @@ module.exports = [
     type: 'get',
     response: config => {
       const { applicationId } = config.query
-      const fakeData = group.filter(x => x.applicationId == applicationId)[0]
-      let data = fakeData ? fakeData.list : []
+      let data = group.filter(x => x.application_id == applicationId)
       return {
         code: 20000,
         message: 'success',
@@ -35,12 +32,9 @@ module.exports = [
     type: 'post',
     response: config => {
       const { applicationId, name } = config.body
-      group.forEach(x => {
-        if (x.applicationId == applicationId)
-          x.list.push({ id: tempId--, label: name })
-      })
-      let temp = group.filter(x => x.applicationId == applicationId)[0].list
-      let data = temp.filter(x => x.label == name)
+      let maxId = Math.max(...group.filter(g => g.application_id == applicationId).map(g => g.id)) + 1
+      group.push({ id: maxId, name: name, application_id: applicationId })
+      let data = group.find(g => g.application_id == applicationId && g.name == name)
       return {
         code: 20000,
         message: 'success',
@@ -54,7 +48,10 @@ module.exports = [
     type: 'put',
     response: config => {
       const { id, name } = config.body;
-      data.find(x => x.id == id).name = name
+      group.forEach(x => {
+          if (x.id == id)
+            x.name = name
+        })
       return {
         isSuccess: true,
         message: '修改成功',
