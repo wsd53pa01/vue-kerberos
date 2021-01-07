@@ -2,8 +2,7 @@
   <Transfer
     :left="left"
     :right="right"
-  >
-  </Transfer>
+  />
 </template>
 
 <script>
@@ -17,14 +16,14 @@ import { convertTreeData } from '@/utils'
 export default {
   name: 'Group',
   components: {
-    Transfer,
+    Transfer
   },
   data() {
     return {
       left: {
         name: 'AD 群組',
         data: [],
-        search: true,
+        search: true
       },
       right: {
         name: '群組',
@@ -34,7 +33,7 @@ export default {
           open: true,
           event: this.createEvent
         }
-      },
+      }
     }
   },
   computed: {
@@ -70,7 +69,7 @@ export default {
   methods: {
     createEvent(node) {
       console.log(node)
-      let postData = { applicationId: this.applicationId, name: node.data.test }
+      const postData = { applicationId: this.applicationId, name: node.data.test }
       createGroup(postData).then((response) => {
         console.log(response)
       })

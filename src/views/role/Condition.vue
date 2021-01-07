@@ -231,10 +231,11 @@ export default {
   margin-left: 0;
 }
 
-.el-button::v-deep > span {
+.card-content .el-button::v-deep > span {
   width: 100%;
   display: block;
   position: relative;
+  padding: 0.4rem;
 }
 
 .input-button:hover {
@@ -253,7 +254,7 @@ export default {
   position: absolute;
 }
 
-.el-input::v-deep .el-input__inner {
+.input-button.el-input::v-deep .el-input__inner {
   text-align: center;
   border-top: 0;
   border-left: 0;

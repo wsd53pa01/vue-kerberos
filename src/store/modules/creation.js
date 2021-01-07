@@ -1,6 +1,6 @@
 const state = {
   active: 0,
-  applicationId: 0,
+  applicationId: 0
 }
 
 const mutations = {

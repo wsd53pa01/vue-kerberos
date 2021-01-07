@@ -109,8 +109,9 @@
               <el-checkbox-group v-model="operationFlags">
                 <el-checkbox
                   v-for="permission in permissions"
-                  :key="permission.code"
-                  :label="permission.code"
+                  :key="permission.id"
+                  :label="permission.operationFlag"
+                  :disabled="isSubmitDisabled"
                 >
                   {{ permission.name }}
                 </el-checkbox>
@@ -135,6 +136,7 @@
     <el-dialog title="操作功能管理" :visible.sync="isPermissionVisible" width="900px">
       <permission
         :permissions="permissions"
+        @dmlFinished="permissionUpdated"
       />
     </el-dialog>
   </div>
@@ -150,6 +152,7 @@ import {
 import { getPermission } from '@/api/permission'
 import { operationFlagDecode } from '@/utils/operationFlag'
 import Permission from './Permission'
+import { CheckboxGroup } from 'element-ui'
 
 const defaultNode = {
   applicationId: 0,
@@ -182,12 +185,12 @@ export default {
   },
   computed: {
     applicationId() {
-      return this.$store.state.application.id
+      const applicationId = this.$store.state.application.id
+      return applicationId
     }
   },
   watch: {
     applicationId: function(newVal, oldVal) {
-      this.isPermissionDisabled = !newVal
       this.renderPage(newVal)
     }
   },
@@ -200,6 +203,8 @@ export default {
       this.getPermission(applicationId)
       this.actionDetail = Object.assign({}, defaultNode)
       this.operationFlags = 0
+      this.isPermissionDisabled = applicationId == null || applicationId == ''
+      this.isSubmitDisabled = true
     },
 
     append(data) {
@@ -240,8 +245,9 @@ export default {
     },
 
     getPermission(applicationId) {
-      getPermission(applicationId)
+      getPermission({ applicationId })
         .then(result => {
+          console.log(result);
           if (result.isSuccess) {
             this.permissions = result.data
           }
@@ -269,7 +275,11 @@ export default {
         (prev, curr) => prev + curr,
         0
       )
-      this.isSubmitDisabled = true
+      this.$notify({
+        title: 'Warning',
+        message: '還沒寫submit api',
+        type: 'warning'
+      })
     },
 
     onNodeChecked() {
@@ -286,9 +296,13 @@ export default {
         .filter(parentCode => parentCode !== node.parentCode)
       this.isSubmitDisabled = false
       this.operationFlags = operationFlagDecode(
-        this.permissions.map(x => x.code),
+        this.permissions.map(x => x.operationFlag),
         this.actionDetail.operationFlag
       )
+    },
+
+    permissionUpdated() {
+      this.getPermission(this.applicationId)
     }
   }
 }

@@ -20,7 +20,8 @@ module.exports = [
     type: 'get',
     response: config => {
       const { applicationId } = config.query
-      let data = group.filter(x => x.applicationId == applicationId)[0].list
+      const fakeData = group.filter(x => x.applicationId == applicationId)[0]
+      let data = fakeData ? fakeData.list : []
       return {
         code: 20000,
         message: 'success',

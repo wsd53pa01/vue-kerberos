@@ -75,7 +75,7 @@ const group  = [{
   applicationId: 1,
   list: [{
     id: 1,
-    label: '權限管理群組'
+    name: '權限管理群組'
   }]
 }]
 

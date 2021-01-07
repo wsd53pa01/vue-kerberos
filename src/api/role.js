@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getRole(applicationId) {
   return request({
-    url: '/vue-admin-template/role',
+    url: '/role/',
     method: 'get',
     params: { applicationId }
   })
@@ -10,7 +10,7 @@ export function getRole(applicationId) {
 
 export function createRole(data) {
   return request({
-    url: '/vue-admin-template/role',
+    url: '/role/',
     method: 'post',
     data
   })
@@ -18,7 +18,7 @@ export function createRole(data) {
 
 export function updateRole(data) {
   return request({
-    url: '/vue-admin-template/role',
+    url: '/role/',
     method: 'put',
     data
   })
@@ -26,7 +26,7 @@ export function updateRole(data) {
 
 export function deleteRole(data) {
   return request({
-    url: '/vue-admin-template/role',
+    url: '/role/',
     method: 'delete',
     data
   })

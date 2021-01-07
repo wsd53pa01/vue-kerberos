@@ -3,7 +3,7 @@
     class="dialog"
     :fields="[
       {
-        prop: 'code',
+        prop: 'operationFlag',
         label: '代碼',
         width: '180',
         dialog: {
@@ -25,24 +25,29 @@
         },
       },
     ]"
-    :fetch-data="function () {}"
+    :fetch-data="fetchData"
     :title="''"
     dialog-width="400px"
     :table-data="tableData"
     :create-option="createOption"
     :update-option="updateOption"
     :delete-option="deleteOption"
-    :loading="false"
+    :loading="isLoading"
   />
 </template>
 
 <script>
 import Table from '../Table'
 import {
+  getPermission,
   createPermission,
   updatePermission,
   deletePermission
 } from '@/api/permission'
+
+const emit = {
+  dmlFinished: 'dmlFinished'
+}
 
 export default {
   components: {
@@ -51,6 +56,7 @@ export default {
   props: {
     permissions: {
       required: true,
+      type: Array,
       default() {
         return []
       }
@@ -74,6 +80,19 @@ export default {
       }
     }
   },
+  computed: {
+    applicationId() {
+      return this.$store.state.application.id
+    }
+  },
+  watch: {
+    permissions(newVal, oldVal) {
+      this.tableData = {
+        list: newVal,
+        total: newVal.length
+      }
+    }
+  },
   created() {
     this.tableData = {
       list: this.permissions,
@@ -81,13 +100,32 @@ export default {
     }
   },
   methods: {
+    fetchData(data) {
+      this.isLoading = true
+      getPermission({ applicationId: this.applicationId, ...data })
+        .then(response => {
+          if (response.isSuccess) {
+            this.tableData = {
+              list: response.data,
+              total: response.data.length
+            }
+          }
+        })
+        .catch(err => {
+          throw err
+        })
+        .finally(_ => {
+          this.isLoading = false
+        })
+    },
+
     createPermission(data) {
       this.isLoading = true
       const applicationId = this.$store.state.application.id
       createPermission({ applicationId, ...data })
         .then(response => {
           if (response.isSuccess) {
-            console.log('todo: add permissions')
+            this.$emit(emit.dmlFinished, response.data)
           }
         })
         .catch(err => {
@@ -103,7 +141,7 @@ export default {
       updatePermission(data)
         .then(response => {
           if (response.isSuccess) {
-            console.log('todo: update permissions')
+            this.$emit(emit.dmlFinished, response.data)
           }
         })
         .catch(err => {
@@ -119,7 +157,7 @@ export default {
       deletePermission(data)
         .then(response => {
           if (response.isSuccess) {
-            console.log('todo: delete permissions')
+            this.$emit(emit.dmlFinished, response.data)
           }
         })
         .catch(err => {

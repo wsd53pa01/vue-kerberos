@@ -87,11 +87,8 @@ export default {
     createEvent(data) {
       this.loading = true
       createPermissionTemplate(data).then((response) => {
-        let specifyData = this.tableData.list.find(item => item.id == response.data[0].id)
-        if (specifyData == null)
-          this.tableData.list.unshift(response.data[0])
-        else
-          specifyData.name = data.name
+        const specifyData = this.tableData.list.find(item => item.id == response.data[0].id)
+        if (specifyData == null) { this.tableData.list.unshift(response.data[0]) } else { specifyData.name = data.name }
         this.loading = false
       })
     },
@@ -104,7 +101,7 @@ export default {
       })
     },
     deleteEvent(data) {
-    this.loading = true
+      this.loading = true
       deletePermissionTemplate(data).then((response) => {
         this.tableData.list.filter(item => {
           if (item.id == data.id) { item.name = '' }
