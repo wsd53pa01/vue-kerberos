@@ -151,8 +151,8 @@ import {
 } from '@/api/action'
 import { getPermission } from '@/api/permission'
 import { operationFlagDecode } from '@/utils/operationFlag'
+import Detail from './Detail'
 import Permission from './Permission'
-import { CheckboxGroup } from 'element-ui'
 
 const defaultNode = {
   applicationId: 0,
@@ -168,25 +168,44 @@ const defaultNode = {
 let id = 0
 export default {
   components: {
+    Detail,
     Permission
   },
   data() {
     return {
-      data: [],
-      isCopyDisabled: true,
-      parentCodes: [],
-      actionDetail: {},
-      isSubmitDisabled: true,
-      permissions: [],
-      operationFlags: [],
-      isPermissionDisabled: true,
-      isPermissionVisible: false
+      action: {
+        data: [],
+        copyDisabled: true
+      },
+      detail: {
+        data: {},
+        parentCode: [],
+        permissionManageDisabled: true,
+        submitDisabled: true
+      },
+      permission: {
+        data: []
+      }
+
+
+      // data: [],
+      // isCopyDisabled: true,
+      // parentCodes: [],
+      // actionDetail: {},
+      // isSubmitDisabled: true,
+      // permissions: [],
+      // operationFlags: [],
+      // isPermissionDisabled: true,
+      // isPermissionVisible: false
     }
   },
   computed: {
     applicationId() {
       const applicationId = this.$store.state.application.id
       return applicationId
+    },
+    permissionFlags() {
+      return this.permission.data.map(value => value.operationFlag)
     }
   },
   watch: {
@@ -201,26 +220,27 @@ export default {
     renderPage(applicationId) {
       this.getActions(applicationId)
       this.getPermission(applicationId)
-      this.actionDetail = Object.assign({}, defaultNode)
-      this.operationFlags = 0
-      this.isPermissionDisabled = applicationId == null || applicationId == ''
-      this.isSubmitDisabled = true
+
+      // this.actionDetail = Object.assign({}, defaultNode)
+      // this.operationFlags = 0
+      // this.isPermissionDisabled = applicationId == null || applicationId == ''
+      // this.isSubmitDisabled = true
     },
 
-    append(data) {
-      const newChild = Object.assign({}, defaultNode)
-      newChild.id = id++
-      newChild.label = '新節點'
-      newChild.menuName = '新節點'
-      createAction(newChild).then(x => {
-        // TODO: call 建立的api後，放入新建立的Action
-        if (!data.children) {
-          this.$set(data, 'children', [])
-        }
-        data.children.push(newChild)
-        this.onNodeClicked(newChild)
-      })
-    },
+    // append(data) {
+    //   const newChild = Object.assign({}, defaultNode)
+    //   newChild.id = id++
+    //   newChild.label = '新節點'
+    //   newChild.menuName = '新節點'
+    //   createAction(newChild).then(x => {
+    //     // TODO: call 建立的api後，放入新建立的Action
+    //     if (!data.children) {
+    //       this.$set(data, 'children', [])
+    //     }
+    //     data.children.push(newChild)
+    //     this.onNodeClicked(newChild)
+    //   })
+    // },
 
     remove(node, data) {
       const parent = node.parent
@@ -231,13 +251,17 @@ export default {
 
     getActions(applicationId) {
       getAction(applicationId)
-        .then(result => {
-          this.data = []
-          result.data.forEach(action => {
-            this.data.push(
-              Object.assign({ label: action.menuName }, action)
-            )
-          })
+        .then(response => {
+          this.action.data = response.isSuccess ? response.data.map(action => {
+            return Object.assign({ label: action.menuName }, action)
+          }) : []
+
+          // this.data = []
+          // response.data.forEach(action => {
+          //   this.data.push(
+          //     Object.assign({ label: action.menuName }, action)
+          //   )
+          // })
         })
         .catch(e => {
           throw e
@@ -246,29 +270,29 @@ export default {
 
     getPermission(applicationId) {
       getPermission({ applicationId })
-        .then(result => {
-          console.log(result);
-          if (result.isSuccess) {
-            this.permissions = result.data
-          }
+        .then(response => {
+          this.permission.data = response.isSuccess ? response.data : []
+          // if (response.isSuccess) {
+          //   this.permissions = response.data
+          // }
         })
         .catch(err => {
           throw err
         })
     },
 
-    addNewNode(node) {
-      const newChild = Object.assign({}, defaultNode)
-      newChild.id = id++
-      newChild.label = '新節點'
-      newChild.menuName = '新節點'
-      // TODO: call 建立的api後，放入新建立的Action
-      this.onNodeClicked(newChild)
-      if (!data.children) {
-        this.$set(data, 'children', [])
-      }
-      this.data.push(newChild)
-    },
+    // addNewNode(node) {
+    //   const newChild = Object.assign({}, defaultNode)
+    //   newChild.id = id++
+    //   newChild.label = '新節點'
+    //   newChild.menuName = '新節點'
+    //   // TODO: call 建立的api後，放入新建立的Action
+    //   this.onNodeClicked(newChild)
+    //   if (!data.children) {
+    //     this.$set(data, 'children', [])
+    //   }
+    //   this.data.push(newChild)
+    // },
 
     submitForm() {
       this.actionDetail.operationFlag = this.operationFlags.reduce(
@@ -288,17 +312,21 @@ export default {
     },
 
     onNodeClicked(node) {
-      this.actionDetail = node
-      this.parentCodes = this.data
-        .map(node => {
-          return node.parentCode
-        })
-        .filter(parentCode => parentCode !== node.parentCode)
-      this.isSubmitDisabled = false
-      this.operationFlags = operationFlagDecode(
-        this.permissions.map(x => x.operationFlag),
-        this.actionDetail.operationFlag
-      )
+      this.detail.data = node
+      this.detail.parentCode = this.action.data.filter(action => action.parentCode !== node.parentCode)
+      this.detail.data.operationFlag = operationFlagDecode(this.permissionFlags, this.detail.data.operationFlag)
+
+      // this.actionDetail = node
+      // this.parentCodes = this.data
+      //   .map(node => {
+      //     return node.parentCode
+      //   })
+      //   .filter(parentCode => parentCode !== node.parentCode)
+      // this.isSubmitDisabled = false
+      // this.operationFlags = operationFlagDecode(
+      //   this.permissions.map(x => x.operationFlag),
+      //   this.actionDetail.operationFlag
+      // )
     },
 
     permissionUpdated() {

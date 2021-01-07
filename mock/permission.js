@@ -42,13 +42,20 @@ module.exports = [
     url: '/permission/',
     type: 'get',
     response: config => {
-      const { applicationId, name, operationFlag } = config.query
-      const filterPermission = data.filter(x => {
+      const { applicationId, name, operationFlag, limit, page } = config.query
+      let filterPermission = data.filter(x => {
         const filterApplication = x.applicationId == applicationId
         const filterName = x.name.includes(name) || name === '' || name == null
         const filteroperationFlag = x.operationFlag == operationFlag || operationFlag == '' || operationFlag == null
         return filterApplication && filterName && filteroperationFlag
       })
+
+      if (limit && page) {
+        const start = page * limit - limit
+        const end = page * limit
+        filterPermission = filterPermission.slice(start, end)
+      }
+
       return createResult(
         true,
         '',

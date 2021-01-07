@@ -50,12 +50,14 @@ module.exports = [
     url: "/action/",
     type: "get",
     response: config => {
-      const { applicationId } = config.query;
+      const { applicationId } = config.query
+      let action = data.filter(x => x.applicationId == applicationId)
+
       return createResponse(
         true,
         "",
         20000,
-        data.filter(x => x.applicationId == applicationId)
+        action
       );
     }
   },
