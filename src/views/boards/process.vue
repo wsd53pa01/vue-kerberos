@@ -5,7 +5,7 @@
       <el-container>
         <el-header height="100px">
           <el-steps :active="active" finish-status="success" align-center>
-            <el-step v-for="item in step" :title="item.title"></el-step>
+            <el-step v-for="item in step" :title="item.title" />
           </el-steps>
           <div class="title" style="text-align: center; margin-top: 20px; board-bottom: none;">
             {{ title }}
@@ -44,7 +44,7 @@ import Finish from './components/Finish'
 import emitter from '@/utils/emitter'
 
 export default {
-  name: 'create',
+  name: 'Create',
   components: {
     Application,
     Group,
@@ -57,13 +57,13 @@ export default {
     return {
       step: [{
         title: '建立應用程式',
-        component: 'Application',
+        component: 'Application'
       }, {
         title: '建立群組',
-        component: 'Group',
+        component: 'Group'
       }, {
         title: '建立角色',
-        component: 'Role',
+        component: 'Role'
       }, {
         title: '功能設定',
         component: 'Action'
@@ -75,7 +75,7 @@ export default {
         component: 'Finish'
       }],
       title: '',
-      main: '',
+      main: ''
     }
   },
   computed: {
@@ -102,7 +102,7 @@ export default {
     },
     next() {
       emitter.$emit('next')
-    },
+    }
   }
 }
 </script>

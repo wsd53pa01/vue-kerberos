@@ -3,57 +3,63 @@ let data = [
     id: 1,
     applicationId: 1,
     name: '新增',
-    code: 1
+    operationFlag: 1
   },
   {
     id: 2,
     applicationId: 1,
     name: '刪除',
-    code: 2
+    operationFlag: 2
   },
   {
     id: 3,
     applicationId: 1,
     name: '修改',
-    code: 4
+    operationFlag: 4
   },
   {
     id: 4,
     applicationId: 1,
     name: '查詢',
-    code: 8
+    operationFlag: 8
   },
   {
     id: 5,
     applicationId: 2,
     name: '新增eip',
-    code: 1
+    operationFlag: 1
   },
   {
     id: 6,
     applicationId: 2,
     name: '刪除eip',
-    code: 2
+    operationFlag: 2
   }
 ]
 
 module.exports = [
   {
-    url: '/vue-admin-template/permission',
+    url: '/permission/',
     type: 'get',
     response: config => {
-      const { applicationId } = config.query
+      const { applicationId, name, operationFlag } = config.query
+      const filterPermission = data.filter(x => {
+        const filterApplication = x.applicationId == applicationId
+        const filterName = x.name.includes(name) || name === '' || name == null
+        const filteroperationFlag = x.operationFlag == operationFlag || operationFlag == '' || operationFlag == null
+        return filterApplication && filterName && filteroperationFlag
+      })
       return createResult(
         true,
         '',
         20000,
-        data.filter(x => x.applicationId == applicationId)
+        filterPermission
       )
     }
   },
 
   {
-    url: '/vue-admin-template/permission',
+    url: '/permission/',
     type: 'post',
     response: config => {
       const body = config.body
@@ -70,7 +76,7 @@ module.exports = [
       const emptyPermission = data.filter(x => x.applicationId == body.applicationId && !x.name)
       if (emptyPermission.length === 0) {
         body.id = Math.max(...data.map(x => x.id)) + 1
-        body.code = Math.max(...data.map(x => x.code)) * 2
+        body.operationFlag = Math.max(...data.map(x => x.operationFlag)) * 2
         data.push(body)
       } else {
         body.id = emptyPermission[0].id
@@ -87,23 +93,32 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/permission',
+    url: '/permission/',
     type: 'put',
     response: config => {
-      const body = config.body
+      const { id, name } = config.body
+
+      const toUpdate = data.find(x => x.id == id)
+      toUpdate.name = name
       return createResult(
         true,
         '',
         20000,
+        toUpdate
       )
     }
   },
 
   {
-    url: '/vue-admin-template/permission',
+    url: '/permission/',
     type: 'delete',
     response: config => {
-      data = data.filter(value => value.id != id)
+      const { applicationId, id } = config.body
+      data.forEach(element => {
+        if (element.id == id) {
+          element.name = ''
+        }
+      })
 
       return createResult(
         true,

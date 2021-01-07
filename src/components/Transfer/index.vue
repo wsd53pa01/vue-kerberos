@@ -65,12 +65,11 @@ export default {
       default: false,
     },
   },
-  created() {
-  },
   data() {
     return {
     }
   },
+<<<<<<< HEAD
   methods: {
     addClick() {
       let data = {
@@ -105,6 +104,9 @@ export default {
     rightDeleteNode(node) {
       this.$emit('rightDeleteNode', node)
     }
+=======
+  created() {
+>>>>>>> develop
   }
 }
 </script>

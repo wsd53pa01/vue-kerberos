@@ -13,9 +13,9 @@ export default {
     return {
     }
   },
-  created() {
-  },
   computed: {
+  },
+  created() {
   },
   methods: {
   }

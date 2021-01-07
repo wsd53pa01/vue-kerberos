@@ -55,7 +55,7 @@ export const constantRoutes = [
       },
       {
         path: 'process',
-        name: 'process',
+        name: 'Process',
         component: () => import('@/views/boards/process'),
         meta: { title: '新增應用程式', noCache: true, activeMenu: '/boards'},
         hidden: true

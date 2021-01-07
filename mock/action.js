@@ -47,7 +47,7 @@ const data = [
 
 module.exports = [
   {
-    url: "/vue-admin-template/action",
+    url: "/action/",
     type: "get",
     response: config => {
       const { applicationId } = config.query;
@@ -61,14 +61,14 @@ module.exports = [
   },
 
   {
-    url: "/vue-admin-template/action",
+    url: "/action/",
     type: "put",
     response: config => {
     }
   },
 
   {
-    url: "/vue-admin-template/action",
+    url: "/action/",
     type: "post",
     response: config => {
       const body = config.body;
@@ -84,7 +84,7 @@ module.exports = [
   },
 
   {
-    url: "/vue-admin-template/action",
+    url: "/action/",
     type: "delete",
     response: config => {}
   }

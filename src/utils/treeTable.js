@@ -11,8 +11,7 @@ export function addTreeProperty(arr) {
   arr.forEach((obj) => {
     obj['checked'] = false
     obj['indeterminate'] = false
-    if ('children' in obj && obj['children'].length > 0)
-    addTreeProperty(obj['children'])
+    if ('children' in obj && obj['children'].length > 0) { addTreeProperty(obj['children']) }
   })
   return arr
 }

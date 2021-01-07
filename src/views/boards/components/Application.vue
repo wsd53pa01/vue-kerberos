@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <span style="line-height:1.7" >應用程式名稱</span>
-    <el-form ref="form" :model="model" :rules="rule" >
+    <span style="line-height:1.7">應用程式名稱</span>
+    <el-form ref="form" :model="model" :rules="rule">
       <el-form-item prop="name">
         <el-input
           ref="input"
@@ -24,7 +24,7 @@ export default {
   name: 'Application',
   data() {
     const validateInput = (rule, value, callback) => {
-      if(value.trim().length == 0) {
+      if (value.trim().length == 0) {
         callback(new Error('不可為空'))
       } else {
         callback()
