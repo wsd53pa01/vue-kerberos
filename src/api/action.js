@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function getAction(applicationId) {
+export function getAction(params) {
   return request({
     url: '/action/',
     method: 'get',
-    params: { applicationId }
+    params
   })
 }
 

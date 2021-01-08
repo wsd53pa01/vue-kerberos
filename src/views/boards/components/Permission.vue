@@ -9,7 +9,7 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="12">
-        <Tree name="功能列表" :data="actions" />
+        <Tree name="功能列表" :data="actions" title="功能列表" />
       </el-col>
       <el-col :span="12">
         <el-card class="permission-card">

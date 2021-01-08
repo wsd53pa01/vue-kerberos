@@ -312,4 +312,9 @@ export default {
   border-left: 0;
   border-right: 0;
 }
+
+.el-card::v-deep .el-card__body {
+  height: calc(100% - 55px);
+  overflow: auto;
+}
 </style>
