@@ -17,6 +17,8 @@
       ref="tree"
       :default-expanded-keys="key"
       :expand-on-click-node="false"
+      :highlight-current="nodeClickable"
+      @node-click="onNodeClick"
     >
       <span slot-scope="{ node, data }" style="width: 100%;">
         <div v-if="node.data.edit == true">
@@ -68,6 +70,7 @@ export default {
    * @param {Boolean} props.createNodeVisible 新增子節點按鈕顯示或不顯示
    * @param {Boolean} props.updateVisible 更新按鈕顯示或不顯示
    * @param {Boolean} props.deleteVisible 刪除按鈕顯示或不顯示
+   * @param {Boolean} props.nodeClickable 節點可否點選，若設定為true則會highlight，預設false
    */
   props: {
     title: {
@@ -75,12 +78,16 @@ export default {
       type: String
     },
     data: {
-      type: Array
+      type: Array,
     },
     createRootVisible: {
       type: Boolean,
       default: false
     },
+    nodeClickable: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -181,6 +188,10 @@ export default {
         removeNode: () => this.$refs.tree.remove(node.data)
       })
     },
+
+    onNodeClick(node) {
+      this.$emit('onNodeClick', node)
+    }
   },
 }
 </script>

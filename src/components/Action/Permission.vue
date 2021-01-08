@@ -101,7 +101,6 @@ export default {
   },
   methods: {
     fetchData(data) {
-      console.log({ applicationId: this.applicationId, ...data })
       this.isLoading = true
       getPermission({ applicationId: this.applicationId, ...data })
         .then(response => {
