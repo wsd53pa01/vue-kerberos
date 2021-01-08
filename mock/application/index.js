@@ -7,11 +7,10 @@ module.exports = [
     url: '/application/',
     type: 'get',
     response: _ => {
-      let data = { applications: application }
       return {
         isSuccess: true,
         code: 20000,
-        data
+        data: application
       }
     }
   }, {
@@ -37,7 +36,7 @@ module.exports = [
       groupUser.push({
         id: maxGroupUserId,
         group_id: maxGroupId,
-        user_id: 1
+        user_id: 1111
       })
 
       return {

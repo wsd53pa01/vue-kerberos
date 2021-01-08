@@ -37,7 +37,7 @@
 <script>
 import Application from './components/Application'
 import Group from '@/components/Group'
-import Role from './components/Role'
+import Role from '@/components/Role'
 import Action from './components/Action'
 import Permission from './components/Permission'
 import Finish from './components/Finish'

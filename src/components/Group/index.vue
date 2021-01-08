@@ -17,7 +17,6 @@ import Transfer from '@/components/Transfer'
 import emitter from '@/utils/emitter.js'
 import { getAd, createGroup, updateGroup } from '@/api/group'
 import { tree, assign, deleteGroupUser } from '@/api/group-user'
-import { arrayToNested, addTreeProperty } from '@/utils/treeTable.js'
 import { convertTreeData } from '@/utils'
 
 export default {
@@ -62,7 +61,7 @@ export default {
     emitter.$on('next', () => { this.active += 1 })
     emitter.$on('previous', () => { this.active -= 1 })
     getAd().then((response) => {
-      this.left.data = response.data
+      this.left.data = convertTreeData(response.data)
     })
     this.fetchRightTree()
   },
@@ -84,14 +83,22 @@ export default {
       })
     },
     // 右樹的刪除節點事件
-    rightDelete(obj) {
+    rightDelete(node) {
+      console.log(node)
       let data = {
-        tag: obj.node.data.tag,
-        id: obj.node.data.id,
-        data_id: obj.node.data.data_id
+        tag: node.data.tag,
+        id: node.data.id,
+        data_id: node.data.data_id
       }
       deleteGroupUser(data).then((response) => {
-        obj.removeNode()
+        if (response.isSuccess) {
+          this.$notify({
+            title: '成功',
+            message: '刪除成功',
+            type: 'success',
+            duration: 2000
+          })
+        }
       })
     },
     // 右樹的更新節點事件
@@ -111,11 +118,11 @@ export default {
       tree(this.applicationId).then((response) => {
         response.data.forEach(data => {
           switch(true) {
-            case data.tag == "group":
+            case data.tag == 'group':
               data.deleteVisible = true
               data.updateVisible = true
               break;
-            case data.tag == "user":
+            case data.tag == 'user':
               data.deleteVisible = true
               break;
           }

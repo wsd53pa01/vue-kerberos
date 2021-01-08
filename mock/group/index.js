@@ -5,6 +5,7 @@ module.exports = [
     url: '/group/ad/',
     type: 'get',
     response: _ => {
+
       return {
         code: 20000,
         message: 'success',
@@ -32,9 +33,10 @@ module.exports = [
     type: 'post',
     response: config => {
       const { applicationId, name } = config.body
+      console.log(group)
       let maxId = Math.max(...group.filter(g => g.application_id == applicationId).map(g => g.id)) + 1
       group.push({ id: maxId, name: name, application_id: applicationId })
-      let data = group.find(g => g.application_id == applicationId && g.name == name)
+      let data = group.find(g => g.id == maxId)
       return {
         code: 20000,
         message: 'success',

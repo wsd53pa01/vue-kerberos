@@ -1,45 +1,4 @@
-let data = [
-  {
-    applicationId: 1,
-    id: 1,
-    name: "Administrator"
-  },
-  {
-    applicationId: 1,
-    id: 2,
-    name: "Developer"
-  },
-  {
-    applicationId: 2,
-    id: 3,
-    name: "RoleA"
-  },
-  {
-    applicationId: 2,
-    id: 4,
-    name: "RoleB"
-  },
-  {
-    applicationId: 2,
-    id: 5,
-    name: "RoleC"
-  },
-  {
-    applicationId: 2,
-    id: 6,
-    name: "RoleD"
-  },
-  {
-    applicationId: 3,
-    id: 5,
-    name: "RoleC"
-  },
-  {
-    applicationId: 3,
-    id: 6,
-    name: "RoleD"
-  }
-];
+const { role } = require('./role.js')
 
 module.exports = [
   {
@@ -51,7 +10,7 @@ module.exports = [
       return {
         isSuccess: true,
         code: 20000,
-        data: data.filter(x => x.applicationId == applicationId)
+        data: role.filter(x => x.applicationId == applicationId)
       };
     }
   },
@@ -61,14 +20,19 @@ module.exports = [
     type: "post",
     response: config => {
       const body = config.body;
-      body.id = Math.max(...data.map(x => x.id)) + 1;
-      data.push(body);
+      body.id = Math.max(...role.map(x => x.id)) + 1;
+      let data = {
+        id: body.id,
+        application_id: body.applicationId,
+        name: body.name
+      }
+      role.push(data);
 
       return {
         isSuccess: true,
         message: "新增成功",
         code: 20000,
-        data: {}
+        data: data
       };
     }
   },
@@ -78,8 +42,9 @@ module.exports = [
     type: "put",
     response: config => {
       const { id, name } = config.body;
-      data.find(x => x.id == id).name = name;
-
+      console.log('put before: ', role)
+      role.find(x => x.id == id).name = name;
+      console.log('put after: ', role)
       return {
         isSuccess: true,
         message: "修改成功",
@@ -94,8 +59,13 @@ module.exports = [
     type: "delete",
     response: config => {
       const { id } = config.body;
-      data = data.filter(value => value.id != id);
-
+      console.log('delete before: ', role)
+      console.log(id)
+      const index = role.findIndex(r => r.id == id)
+      console.log(index)
+      if (index > -1)
+      role.splice(index,  1)
+      console.log('delete after: ', role)
       return {
         isSuccess: true,
         message: "刪除成功",
@@ -104,4 +74,4 @@ module.exports = [
       };
     }
   }
-];
+]
