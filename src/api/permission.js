@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function getPermission({ applicationId, name, code }) {
+export function getPermission(params) {
   return request({
     url: '/permission/',
     method: 'get',
-    params: { applicationId, name, code }
+    params
   })
 }
 

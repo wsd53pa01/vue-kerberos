@@ -212,7 +212,11 @@ export default {
 
 .el-card {
   height: 100%;
+}
+
+.el-card::v-deep > .el-card__body { 
   overflow: auto;
+  height: calc(100% - 55px);
 }
 
 .app-container {
