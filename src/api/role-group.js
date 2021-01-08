@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getRelation(applicationId, roleId, groupId) {
   return request({
-    url: '/role-group',
+    url: '/role-group/',
     method: 'get',
     params: { applicationId, roleId, groupId }
   })
@@ -10,7 +10,48 @@ export function getRelation(applicationId, roleId, groupId) {
 
 export function createRelation(data) {
   return request({
-    url: '/role-group',
+    url: '/role-group/',
+    method: 'post',
+    data
+  })
+}
+
+export function getRoleGroup(applicationId) {
+  return request({
+    url: '/role-group/',
+    method: 'get',
+    params: { applicationId }
+  })
+}
+
+export function createRoleGroup(data) {
+  return request({
+    url: '/role-group/assign/',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteRoleGroup(data) {
+  console.log(data)
+  return request({
+    url: '/role-group/',
+    method: 'delete',
+    data
+  })
+}
+
+export function tree(applicationId) {
+  return request({
+    url: '/role-group/tree/',
+    method: 'get',
+    params: { applicationId }
+  })
+}
+
+export function assign(data) {
+  return request({
+    url: '/role-group/assign/',
     method: 'post',
     data
   })

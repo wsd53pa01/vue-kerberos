@@ -48,7 +48,7 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'boards',
+        path: '/boards',
         name: 'Boards',
         component: () => import('@/views/boards/index'),
         meta: { title: '應用程式看板', icon: 'dashboard' }

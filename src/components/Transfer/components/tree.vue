@@ -65,11 +65,16 @@ export default {
   name: 'Tree',
   /**
    * @param {String} props.title 卡片標頭
-   * @param {Array} props.data tree 的 data
-   * @param {Boolean} props.createRootVisible 新增根節點按鈕顯示或不顯示
-   * @param {Boolean} props.createNodeVisible 新增子節點按鈕顯示或不顯示
-   * @param {Boolean} props.updateVisible 更新按鈕顯示或不顯示
-   * @param {Boolean} props.deleteVisible 刪除按鈕顯示或不顯示
+   * @param {[{
+   *  id: (String|Number),
+   *  data_id: Number,
+   *  name: String,
+   *  parentId: String,
+   *  tag: String,
+   *  deleteVisible: Boolean, 更新按鈕，顯示或不顯示
+   *  updateVisible: Boolean, 刪除按鈕，顯示或不顯示
+   * }]} props.data tree 的 data
+   * @param {Boolean} props.createRootVisible 新增根節點按鈕，顯示或不顯示
    * @param {Boolean} props.nodeClickable 節點可否點選，若設定為true則會highlight，預設false
    */
   props: {
@@ -183,10 +188,8 @@ export default {
     },
     // 刪除節點
     deleteNode(node) {
-      this.$emit('deleteNode', {
-        node,
-        removeNode: () => this.$refs.tree.remove(node.data)
-      })
+      this.$refs.tree.remove(node.data)
+      this.$emit('deleteNode', node)
     },
 
     onNodeClick(node) {

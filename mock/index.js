@@ -11,7 +11,8 @@ const groupUser = require('./group-user')
 const action = require('./action')
 const permission = require('./permission')
 const role = require('./role')
-const roleGroupRelation = require('./role-group')
+// const roleGroupRelation = require('./role-group.js')
+const roleGroup = require('./role-group')
 const rolePermission = require('./role-permission/index')
 
 const mocks = [
@@ -25,7 +26,7 @@ const mocks = [
   ...action,
   ...permission,
   ...role,
-  ...roleGroupRelation,
+  ...roleGroup,
   ...rolePermission
 ]
 
