@@ -36,6 +36,12 @@
           </el-input>
         </div>
         <div v-else>
+          <!-- <el-button
+            type="text"
+            class="icon"
+            icon="el-icon-plus"
+            @click="appendChild(node)"
+          /> -->
           <el-button
             v-if="data.updateVisible"
             class="icon"
@@ -117,6 +123,21 @@ export default {
         this.$refs.input.focus()
       })
     },
+    // 新增空的根結點。
+    appendChild(node) {
+      // const newData = {
+      //   id: "5b16c132-efba-4084-a581-ff08dd9b91da",
+      //   label: 'test',
+      //   children: [],
+      //   parentId: "5b16c132-efba-4084-a581-ff08dd9b91da"
+      // }
+      // if (node.data.children == undefined) {
+      //   node.data.children = []
+      // }
+      // this.$nextTick(() => {
+      //   node.data.children.push(newData)
+      // })
+    },
     // 節點修改後，發送修改事件。
     changeNode(node, data) {
       if (data.label.trim().length != 0) {
@@ -191,7 +212,6 @@ export default {
       this.$refs.tree.remove(node.data)
       this.$emit('deleteNode', node)
     },
-
     onNodeClick(node) {
       this.$emit('onNodeClick', node)
     }

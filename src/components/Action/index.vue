@@ -15,7 +15,6 @@
                 :disabled="action.copyDisabled"
               />
             </el-row>
-
             <Tree
               title="功能列表"
               :data="action.tree"
@@ -158,12 +157,13 @@ export default {
           id: menuCode,
           name: menuName,
           parentId: parentCode,
+          children: [],
           createVisible: true,
           updateVisible: true,
           deleteVisible: true
         }
       })
-
+      console.log(tree)
       this.action.tree = convertTreeData(tree)
     },
 

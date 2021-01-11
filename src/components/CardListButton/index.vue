@@ -103,6 +103,7 @@ export default {
    * @param {Boolean} props.hasDelete 是否顯示刪除的icon，預設不開啟
    */
   props: {
+    name: 'CardListButton',
     title: {
       type: String,
       default() {
@@ -250,7 +251,7 @@ export default {
       }).then(() => {
         this.$emit(emitEvent.deleteEvent, item)
       })
-    }
+    },
   }
 }
 </script>

@@ -66,7 +66,7 @@ export default {
           let data = { name: this.model.name }
           createApplication(data).then((response) => {
             console.log(response.data.id)
-            this.$store.dispatch('process/setApplicationId', response.data.id)
+            this.$store.commit('application/SET_ID', response.data.id)
             this.active += 1
           })
         }

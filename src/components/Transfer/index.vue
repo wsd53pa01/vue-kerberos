@@ -123,7 +123,6 @@ export default {
   display: flex;
   flex-direction: column;
   height: 300px;
-
   button {
     align-self: center;
     margin: 25px 0px 0px;
