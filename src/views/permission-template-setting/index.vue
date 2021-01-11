@@ -1,6 +1,6 @@
 
 <template>
-  <div class="context-container">
+  <div class="app-container">
     <Table
       :title="'權限範本'"
       :fields="[{

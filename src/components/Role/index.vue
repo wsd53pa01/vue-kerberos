@@ -39,7 +39,7 @@ export default {
   computed: {
     applicationId: {
       get() {
-        return this.$store.state.process.applicationId
+        return this.$store.state.application.id
       }
     }
   },

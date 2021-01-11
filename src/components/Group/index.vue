@@ -50,8 +50,13 @@ export default {
     },
     applicationId: {
       get() {
-        return this.$store.state.process.applicationId
-      }
+        return this.$store.state.application.id
+      },
+    }
+  },
+  watch: {
+    applicationId() {
+      this.fetchRightTree()
     }
   },
   beforeCreate() {

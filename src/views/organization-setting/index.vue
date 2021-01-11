@@ -1,5 +1,5 @@
 <template>
-  <div class="context-container">
+  <div class="app-container">
     <Table
       :title="'組織設定'"
       :fields="[{
@@ -109,17 +109,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.context-container {
-  display: block;
-  position: absolute;
-  margin: 50px;
-  width: 90%;
-  height: auto;
-  left: 50%;
-  transform: translate(-55%, 0%);
-}
 
 .action-icon {
   text-align: center
 }
+
 </style>
