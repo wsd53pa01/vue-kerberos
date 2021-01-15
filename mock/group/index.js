@@ -33,7 +33,6 @@ module.exports = [
     type: 'post',
     response: config => {
       const { applicationId, name } = config.body
-      console.log(group)
       let maxId = Math.max(...group.filter(g => g.application_id == applicationId).map(g => g.id)) + 1
       group.push({ id: maxId, name: name, application_id: applicationId })
       let data = group.find(g => g.id == maxId)

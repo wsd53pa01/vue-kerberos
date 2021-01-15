@@ -7,7 +7,7 @@
         label: '組織名稱',
         dialog: {
           show: true,
-          data: [{ value: 1, text: '嘉里大榮物流股份有限公司'}, { value: 2, text: 'Organization 5' }],
+          data: [{ value: 1, text: 'Organization 1'}, { value: 2, text: 'Organization 5' }],
           type: 'select',
           require: true,
         },

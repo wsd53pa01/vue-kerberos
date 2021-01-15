@@ -1,7 +1,7 @@
 let organizations = {
   list: [{
     id: 1,
-    name: '嘉里大榮物流股份有限公司'
+    name: 'Organization 1'
   }, {
     id: 2,
     name: 'Organization 5'

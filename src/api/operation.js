@@ -1,32 +1,32 @@
 import request from '@/utils/request'
 
-export function getPermission(params) {
+export function getOperation(params) {
   return request({
-    url: '/permission/',
+    url: '/operation/',
     method: 'get',
     params
   })
 }
 
-export function createPermission(data) {
+export function createOperation(data) {
   return request({
-    url: '/permission/',
+    url: '/operation/',
     method: 'post',
     data
   })
 }
 
-export function updatePermission(data) {
+export function updateOperation(data) {
   return request({
-    url: '/permission/',
+    url: '/operation/',
     method: 'put',
     data
   })
 }
 
-export function deletePermission(data) {
+export function deleteOperation(data) {
   return request({
-    url: '/permission/',
+    url: '/operation/',
     method: 'delete',
     data
   })

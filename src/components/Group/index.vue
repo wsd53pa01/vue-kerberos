@@ -89,7 +89,6 @@ export default {
     },
     // 右樹的刪除節點事件
     rightDelete(node) {
-      console.log(node)
       let data = {
         tag: node.data.tag,
         id: node.data.id,

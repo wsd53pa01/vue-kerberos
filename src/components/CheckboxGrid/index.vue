@@ -8,7 +8,7 @@
 
     <el-table-column
       label="全選"
-      :min-width="header.length > 4 ? null : 20"
+      :min-width="columnList.length > 4 ? null : 20"
       align="center"
     >
       <template slot-scope="scope">
@@ -22,15 +22,16 @@
     </el-table-column>
 
     <el-table-column
-      v-for="item in header"
+      v-for="item in columnList"
       :key="item.id"
-      :min-width="header.length > 4 ? null : 20"
+      :min-width="columnList.length > 4 ? null : 20"
       align="center"
       :label="item.name"
     >
       <template slot-scope="scope">
         <el-checkbox
-          v-model="scope.row.checked[item.id]"
+          :disabled="scope.row.disabled[item.id]"
+          v-model="!scope.row.disabled[item.id] && scope.row.checked[item.id]"
           @change="onCheckboxSelect(scope.$index, item.id)"
         />
       </template>
@@ -43,7 +44,7 @@ const checkedColumnBaseId = 'checkedAll'
 export default {
   /**
    * @param {Array} props.data 必填欄位，checked中的資料會對應head的id，欄位： [{ id: 0, name: Any, checked: Array<Any> }]
-   * @param {Array} props.header 必填欄位，資料表的標頭，欄位：[{ id: Any, name: Any }]
+   * @param {Array} props.columnList 必填欄位，資料表的標頭，欄位：[{ id: Any, name: Any }]
    */
   props: {
     data: {
@@ -60,10 +61,10 @@ export default {
         return hasId && hasName && hasChecked
       },
       default() {
-        return [{ id: 0, name: '', checked: [] }]
+        return [{ id: 0, name: '', checked: [], disabled: {} }]
       }
     },
-    header: {
+    columnList: {
       type: Array,
       require: true,
       validator(value) {
@@ -82,12 +83,12 @@ export default {
   },
   data() {
     return {
-      dataSource: []
+      dataSource: [{ id: 'selectAllId', name: '全選', checked: [], disabled: {} }]
     }
   },
   computed: {
     headColumnIds() {
-      return this.header.map(x => x.id)
+      return this.columnList.map(x => x.id)
     }
   },
   watch: {
@@ -96,16 +97,16 @@ export default {
      */
     data(newVal, oldVal) {
       this.dataSource = [
-        { id: 'selectAllId', name: '全選', checked: [] },
+        { id: 'selectAllId', name: '全選', checked: [], disabled: {} },
         ...newVal
       ].map((value, index) => {
         const obj = Object.assign(
-          { checked: {} },
+          { checked: {}, disabled: {} },
           { id: value.id, name: value.name }
         )
-
         this.headColumnIds.forEach(headColumnId => {
           obj.checked[headColumnId] = value.checked.includes(headColumnId)
+          obj.disabled[headColumnId] = value.disabled[headColumnId]
         })
         obj[checkedColumnBaseId + index] = false
         return obj
@@ -116,7 +117,8 @@ export default {
       this.dataSource[0][checkedColumnBaseId + 0] = this.isCheckedAll()
     }
   },
-  created() {},
+  created() {
+  },
   methods: {
     /**
      * 點擊全選checkbox的事件
@@ -189,6 +191,8 @@ export default {
      * 判斷所有checkbox是否打勾
      */
     isCheckedAll() {
+      let onlyOneRow = this.dataSource.length == 1
+      if (onlyOneRow) return false
       const checkedIntegrated = []
       this.dataSource.forEach((element, index) => {
         if (index === 0) return
@@ -205,6 +209,8 @@ export default {
      * 設定列全選checkbox是否打勾
      */
     checkedAllColumn() {
+      let onlyOneRow = this.dataSource.length == 1
+      if (onlyOneRow) return false
       this.dataSource.forEach((element, index) => {
         element[checkedColumnBaseId + index] = Object.values(
           element.checked
@@ -216,6 +222,8 @@ export default {
      * 設定行全選checkbox是否打勾
      */
     checkedAllRow() {
+      let onlyOneRow = this.dataSource.length == 1
+      if (onlyOneRow) return false
       this.headColumnIds.forEach(headColumnId => {
         const isRowCheckboxChecked = this.dataSource
           .filter((value, index) => index !== 0)
@@ -232,23 +240,21 @@ export default {
       const checkedData = this.dataSource
         .filter((value, index) => {
           return (
-            index !== 0 &&
-            this.headColumnIds.filter(
-              headColumnId => value.checked[headColumnId]
-            ).length > 0
+            index !== 0
           )
         })
         .map(value => {
+          console.log(value)
           return {
             id: value.id,
             name: value.name,
             checked: this.headColumnIds.filter(
-              headColumnId => value.checked[headColumnId]
+              headColumnId => value.checked[headColumnId] && !value.disabled[headColumnId]
             )
           }
         })
       this.$emit('getCheckedData', checkedData)
-    }
+    },
   }
 }
 </script>
@@ -256,5 +262,7 @@ export default {
 <style lang="scss">
 .el-table {
   width: 100%;
+}
+.el-table::before {
 }
 </style>

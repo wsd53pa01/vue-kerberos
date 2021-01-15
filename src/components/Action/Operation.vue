@@ -1,9 +1,10 @@
 <template>
   <Table
     class="dialog"
+    ref="table"
     :fields="[
       {
-        prop: 'operationFlag',
+        prop: 'flag',
         label: '代碼',
         width: '180',
         dialog: {
@@ -38,45 +39,35 @@
 
 <script>
 import Table from '../Table'
+import emitter from '@/utils/emitter.js'
 import {
-  getPermission,
-  createPermission,
-  updatePermission,
-  deletePermission
-} from '@/api/permission'
-
-const emit = {
-  dmlFinished: 'dmlFinished'
-}
+  getOperation,
+  createOperation,
+  updateOperation,
+  deleteOperation
+} from '@/api/operation'
 
 export default {
+  name: 'Operation',
   components: {
     Table
   },
-  props: {
-    permissions: {
-      required: true,
-      type: Array,
-      default() {
-        return []
-      }
-    }
-  },
   data() {
     return {
+      data: [],
       isLoading: false,
       tableData: {},
       createOption: {
         hidden: false,
-        event: this.createPermission
+        event: this.createOperation
       },
       updateOption: {
         hidden: false,
-        event: this.updatePermission
+        event: this.updateOperation
       },
       deleteOption: {
         hidden: false,
-        event: this.deletePermission
+        event: this.deleteOperation
       }
     }
   },
@@ -86,7 +77,7 @@ export default {
     }
   },
   watch: {
-    permissions(newVal, oldVal) {
+    data(newVal, oldVal) {
       this.tableData = {
         list: newVal,
         total: newVal.length
@@ -95,14 +86,14 @@ export default {
   },
   created() {
     this.tableData = {
-      list: this.permissions,
-      total: this.permissions.length
+      list: this.data,
+      total: this.data.length
     }
   },
   methods: {
     fetchData(data) {
       this.isLoading = true
-      getPermission({ applicationId: this.applicationId, ...data })
+      getOperation({ applicationId: this.applicationId, ...data })
         .then(response => {
           if (response.isSuccess) {
             this.tableData = {
@@ -119,13 +110,14 @@ export default {
         })
     },
 
-    createPermission(data) {
+    createOperation(data) {
       this.isLoading = true
       const applicationId = this.$store.state.application.id
-      createPermission({ applicationId, ...data })
+      createOperation({ applicationId, ...data })
         .then(response => {
           if (response.isSuccess) {
-            this.$emit(emit.dmlFinished, response.data)
+            this.$refs.table.refreshTable()
+            this.operationChange()
           }
         })
         .catch(err => {
@@ -136,12 +128,13 @@ export default {
         })
     },
 
-    updatePermission(data) {
+    updateOperation(data) {
       this.isLoading = true
-      updatePermission(data)
+      updateOperation(data)
         .then(response => {
           if (response.isSuccess) {
-            this.$emit(emit.dmlFinished, response.data)
+            this.$refs.table.refreshTable()
+            this.operationChange()
           }
         })
         .catch(err => {
@@ -152,12 +145,13 @@ export default {
         })
     },
 
-    deletePermission(data) {
+    deleteOperation(data) {
       this.isLoading = true
-      deletePermission(data)
+      deleteOperation(data)
         .then(response => {
           if (response.isSuccess) {
-            this.$emit(emit.dmlFinished, response.data)
+            this.$refs.table.refreshTable()
+            this.operationChange()
           }
         })
         .catch(err => {
@@ -166,6 +160,11 @@ export default {
         .finally(_ => {
           this.isLoading = false
         })
+    },
+
+    // 每次「新，刪，修」完都要執行一次。
+    operationChange() {
+      emitter.$emit('operationChange')
     }
   }
 }

@@ -33,7 +33,6 @@ export function createRoleGroup(data) {
 }
 
 export function deleteRoleGroup(data) {
-  console.log(data)
   return request({
     url: '/role-group/',
     method: 'delete',

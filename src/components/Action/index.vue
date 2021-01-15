@@ -5,25 +5,26 @@
         <el-card class="action-card">
           <div>
             <el-row :gutter="20">
-              <el-col :span="12">
-                <el-input placeholder="搜尋" prefix-icon="el-icon-search" />
-              </el-col>
-              <el-button
-                type="success"
-                icon="el-icon-s-order"
-                circle
-                :disabled="action.copyDisabled"
-              />
+              <el-button style="width:100%;"
+                @click="copyCheckedCode"
+              >
+                複製勾選的代碼
+              </el-button>
             </el-row>
             <Tree
+              ref="tree"
               title="功能列表"
               :data="action.tree"
               :create-root-visible="true"
               :node-clickable="true"
+              :defaultExpandAll="true"
+              :searchable="true"
               @createRoot="createAction"
+              @createNode="createNode"
               @updateNode="updateAction"
               @deleteNode="deleteAction"
               @onNodeClick="onNodeClick"
+              @handleDrop="handleDrop"
             />
           </div>
         </el-card>
@@ -34,32 +35,25 @@
       </el-col>
     </el-row>
 
-    <!-- <el-dialog title="操作功能管理" :visible.sync="isPermissionVisible" width="900px">
-      <permission
-        :permissions="permissions"
-        @dmlFinished="permissionUpdated"
-      />
-    </el-dialog> -->
   </div>
 </template>
 
 <script>
+import Detail from './Detail'
 import {
   getAction,
   updateAction,
   createAction,
   deleteAction
 } from '@/api/action'
-import Detail from './Detail'
-import Permission from './Permission'
 import Tree from '@/components/Transfer/components/tree';
-import { convertTreeData } from '@/utils'
+import { convertTreeData, formatNode } from '@/utils/tree'
+import clip from '@/utils/clipboard'
 
 export default {
   components: {
     Tree,
-    Detail,
-    Permission
+    Detail
   },
   data() {
     return {
@@ -82,32 +76,41 @@ export default {
   },
   watch: {
     applicationId: function(newVal, oldVal) {
-      this.getActions()
+      this.fetchAction()
     }
   },
   created() {
-    this.getActions()
+    this.fetchAction()
   },
   methods: {
-
-    getActions() {
+    // 抓取功能列表的資料
+    fetchAction() {
+      this.action.data = []
+      this.action.tree = []
       getAction({ applicationId: this.applicationId })
         .then(response => {
-          this.action.data = response.isSuccess ? response.data : []
-          this.convertActionToTree()
-        })
-        .catch(e => {
-          throw e
+          if (response.isSuccess) {
+            let treeData = []
+            response.data.forEach(data => {
+              treeData.push(this.actionConvertToTree(data))
+            })
+            this.action.tree = convertTreeData(treeData)
+          }
         })
     },
 
+    // 新增功能列表的資料
     createAction(node) {
-      const data = { parentCode: node.data.parent, menuName: node.data.label, applicationId: this.applicationId }
+      const data = {
+        parentCode: node.data.parent,
+        menuName: node.data.label,
+        applicationId: this.applicationId
+      }
       createAction(data)
         .then(response => {
           if (response.isSuccess) {
-            this.action.data.push(response.data)
-            this.convertActionToTree()
+            let data = response.data
+            this.action.tree.push(this.actionConvertToTree(data))
             this.success('新增成功')
           }
         })
@@ -116,55 +119,88 @@ export default {
         })
     },
 
-    updateAction(value) {
-      const node = value.data
-      const toUpdate = this.action.data.find(value => value.menuCode === node.id)
-      toUpdate.menuName = node.label
-      updateAction(toUpdate)
+    // 新增子節點
+    createNode(node) {
+      const request = {
+        parentCode: node.parent.data.id,
+        menuName: node.data.label,
+        applicationId: this.applicationId
+      }
+      createAction(request)
+        .then(response => {
+          if (response.isSuccess) {
+            let data = this.actionFormatToTree(response.data)
+            Object.keys(data).forEach(key => {
+              node.data[key] = data[key]
+            })
+          }
+        })
+    },
+
+    // 更新功能列表的資料
+    updateAction(node) {
+      let required = this.treeConvertToAction(node.data)
+      updateAction(required)
         .then(response => {
           if (response.isSuccess) {
             this.success(response.message)
           }
         })
-        .catch(err => {
-          throw err
-        })
     },
 
-    deleteAction(value) {
-      const node = value.node.data
-      const toDelete = this.action.data.find(value => value.menuCode === node.id)
-      deleteAction({ id: toDelete.id })
+    // 刪除功能列表的資料
+    deleteAction(node) {
+      const data = node.data
+      deleteAction({ id: data.id })
         .then(response => {
           if (response.isSuccess) {
             this.success(response.message)
           }
         })
-        .catch(err => {
-          throw err
-        })
     },
 
-    onNodeClick(node) {
-      const data = this.action.data.find(value => value.menuCode === node.id)
-      this.detail.data = data
+    // 點擊節點，將節點資料放到 Detail 的卡片上
+    onNodeClick(data) {
+      this.detail.data = this.treeConvertToAction(data)
     },
 
-    convertActionToTree() {
-      const tree = this.action.data.map(value => {
-        const { menuName, parentCode, menuCode } = value
-        return {
-          id: menuCode,
-          name: menuName,
-          parentId: parentCode,
-          children: [],
-          createVisible: true,
-          updateVisible: true,
-          deleteVisible: true
-        }
+    treeConvertToAction(data) {
+      let actionData = {
+        menuCode: data.id,
+        href: data.href,
+        icon: data.icon,
+        parentCode: data.parentId,
+        operationFlag: data.operationFlag,
+        sortNumber: data.sortNumber,
+        menuName: data.label,
+      }
+      return actionData
+    },
+
+    /**
+     * 將 action 的資料轉換成 tree 使用的格式
+     * @param {{ menuCode: String, menuName: String, parentCode: String }=} data
+     */
+    actionConvertToTree(data) {
+      return formatNode({
+        id: data.menuCode,
+        label: data.menuName,
+        children: [],
+        parentId: data.parentCode,
+        createVisible: true,
+        updateVisible: true,
+        deleteVisible: true,
+        href: data.href,
+        icon: data.icon,
+        operationFlag: data.operationFlag,
+        sortNumber: data.sortNumber
       })
-      console.log(tree)
-      this.action.tree = convertTreeData(tree)
+    },
+
+
+    // Drag & Drop event
+    handleDrop(node) {
+      this.updateAction(node)
     },
 
     success(message) {
@@ -173,6 +209,11 @@ export default {
         message: message,
         type: 'success'
       })
+    },
+
+    copyCheckedCode() {
+      let text = this.$refs.tree.getCheckedNodes().map(x => x.id).join('\n')
+      clip(text, event)
     }
   }
 }
@@ -188,7 +229,10 @@ export default {
 .el-col {
   border-radius: 4px;
 }
-
+.el-card__body {
+  height: 100%;
+  overflow-y: auto !important;
+}
 .custom-tree-node {
   flex: 1;
   display: flex;
@@ -225,3 +269,4 @@ export default {
   margin-top: -60px;
 }
 </style>
+

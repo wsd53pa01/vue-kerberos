@@ -11,8 +11,6 @@ module.exports = [
       const { applicationId } = config.query
       let groupList = group.filter(g => g.application_id == applicationId)
       let roleList = role.filter(r => r.application_id == applicationId)
-      console.log(groupList)
-      console.log(roleGroup)
       roleList.forEach(roleObj => {
         result.push({
           id: `r_${roleObj.id}`,
@@ -36,7 +34,6 @@ module.exports = [
           }
         })
       })
-      console.log(result)
       return {
         code: 20000,
         message: 'success',
@@ -50,7 +47,6 @@ module.exports = [
     type: 'post',
     response: config => {
       const { rolesId, groupsId } = config.body
-      console.log(rolesId)
       let id = Math.max(...roleGroup.map(x => x.id)) + 1
       rolesId.forEach(roleId => {
         let existsGroupId = roleGroup.filter(x => x.role_id == roleId).map(x => x.group_id)
@@ -77,8 +73,6 @@ module.exports = [
     type: 'delete',
     response: config => {
       const data = config.body
-      console.log('data: ', data)
-      console.log('roleGroup: ', roleGroup)
       if ( data.tag == 'role' )
       {
         let index = role.findIndex(x => x.id == data.data_id)
@@ -94,7 +88,6 @@ module.exports = [
         let index = roleGroup.findIndex(x => x.id == data.id)
         roleGroup.splice(index, 1)
       }
-      console.log('roleGroup: ', roleGroup)
       return {
         code: 20000,
         message: 'success',

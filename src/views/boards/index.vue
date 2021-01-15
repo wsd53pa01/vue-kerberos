@@ -70,7 +70,6 @@ export default {
     },
 
     deleteApplication(item) {
-      console.log(item)
       const data = {
         id: item.id
       }

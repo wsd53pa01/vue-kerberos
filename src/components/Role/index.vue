@@ -154,7 +154,6 @@ export default {
                     tag: 'group'
                   })
                 })
-              console.log(index)
               this.right.data[index].children.push(...groups)
             }
           })

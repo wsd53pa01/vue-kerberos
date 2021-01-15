@@ -91,6 +91,19 @@ export const constantRoutes = [
   },
 
   {
+    path: '/permission',
+    component: Layout,
+    children: [
+      {
+        path: '/permission',
+        name: 'RolePermission',
+        component: () => import('@/views/permission/index'),
+        meta: { title: '角色權限管理', icon: 'el-icon-key' }
+      }
+    ]
+  },
+
+  {
     path: '/group',
     component: Layout,
     children: [

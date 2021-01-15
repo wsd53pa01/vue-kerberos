@@ -15,3 +15,11 @@ export function createRolePermission(data) {
     data
   })
 }
+
+export function SaveRolePermission(data) {
+  return request({
+    url: '/role-permission/',
+    method: 'post',
+    data
+  })
+}

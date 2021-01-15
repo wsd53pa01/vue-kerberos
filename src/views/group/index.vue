@@ -1,17 +1,9 @@
 <template>
   <div class="app-container">
     <el-row>
-      <card-list-button
-        ref:="app"
-        title="應用程式列表"
-        :data="applications"
-        button-layout="vertical"
-        :searchable="true"
-        @onClick="applicationClick"
-      >
-      </card-list-button>
+      <ApplicationList
+      ></ApplicationList>
     </el-row>
-
     <el-row>
       <el-card class="group-card">
         <div slot="header" class="clearfix">
@@ -25,50 +17,20 @@
 </template>
 
 <script>
-import CardListButton from '@/components/CardListButton'
+import ApplicationList from '@/components/ApplicationList'
 import Group from '@/components/Group'
-import { getApplication } from '@/api/application'
 
 export default {
   name: 'Group',
   components: {
     GroupComponent: Group,
-    CardListButton
-  },
-  computed: {
-    applicationId: {
-      get() {
-        return this.$store.state.application.id
-      },
-      set(id) {
-        this.$store.commit('application/SET_ID', id)
-      }
-    }
-  },
-  created() {
-    this.fetchApplication()
+    ApplicationList
   },
   data() {
     return {
-      applications: []
     }
   },
   methods: {
-    fetchApplication() {
-      getApplication()
-        .then(response => {
-          if (response.isSuccess) {
-            response.data.forEach(x => {
-              const obj = Object.assign({ isActive: x.id == this.applicationId }, x)
-              this.applications.push(obj)
-            })
-          }
-        })
-    },
-
-    applicationClick(item) {
-      this.applicationId = item.id
-    }
   }
 }
 </script>
