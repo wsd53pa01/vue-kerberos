@@ -1,9 +1,3 @@
-<!--
-propDialog: {
-  width: String, ex: '100px'
-  form: Object, ex: { fields: [{ name: 'fields name', data: ['option 1', 'option 2']}]}
-}
--->
 <template>
   <div class="table-container">
     <el-card class="box-card">
@@ -143,6 +137,7 @@ propDialog: {
                 <el-input
                   v-show="field.dialog.type == 'text'"
                   v-model="form[field.prop]"
+                  @keyup.enter.native="form[field.prop] =! null ? dialog.status==='create' ? createEvent() : updateEvent() : handleCancel() "
                 />
               </div>
             </el-form-item>
@@ -277,7 +272,6 @@ export default {
       this.form = Object.assign({}, this.form)
     },
     createEvent() {
-      console.log('create')
       this.$refs['form'].validate((valid) => {
         if (valid) {
           this.createOption.event(this.form)
@@ -316,6 +310,10 @@ export default {
         type: 'success',
         duration: 2000
       })
+  },
+    // 重新整理 Table 資料
+    refreshTable() {
+      this.fetchData(this.tableFilter)
     }
   }
 }
