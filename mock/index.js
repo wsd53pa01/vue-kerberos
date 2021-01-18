@@ -2,7 +2,6 @@ const Mock = require('mockjs')
 const { param2Obj } = require('./utils')
 
 const user = require('./user/index')
-const table = require('./table')
 const organization = require('./organization')
 const permissionTemplate = require('./permission-template')
 const application = require('./application')
@@ -16,7 +15,6 @@ const rolePermission = require('./role-permission/index')
 
 const mocks = [
   ...user,
-  ...table,
   ...organization,
   ...permissionTemplate,
   ...application,

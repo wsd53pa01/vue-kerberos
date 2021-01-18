@@ -25,7 +25,7 @@ export default {
         return this.$store.state.application.id
       },
       set(id) {
-        this.$store.commit('application/SET_ID', id)
+        this.$store.dispatch('application/setId', id)
       }
     }
   },

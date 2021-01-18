@@ -234,7 +234,7 @@ export default {
     },
 
     onApplicationClick(item) {
-      this.$store.commit('application/SET_ID', item.id)
+      this.$store.dispatch('application/setId', id)
     },
 
     success(message) {

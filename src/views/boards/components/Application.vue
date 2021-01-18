@@ -65,7 +65,7 @@ export default {
         if (valid) {
           let data = { name: this.model.name }
           createApplication(data).then((response) => {
-            this.$store.commit('application/SET_ID', response.data.id)
+            this.$store.dispatch('application/setId', id)
             this.active += 1
           })
         }
