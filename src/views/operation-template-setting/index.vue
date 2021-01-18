@@ -1,7 +1,8 @@
+
 <template>
   <div class="app-container">
     <Table
-      :title="'組織設定'"
+      :title="'權限範本'"
       :fields="fields"
       edit-dialog-width="400px"
       :data="tableData"
@@ -17,16 +18,16 @@
 
 <script>
 import {
-  getOrganization,
-  createOrganization,
-  updateOrganization,
-  deleteOrganization
-} from '@/api/organization'
+  getOperationTemplate,
+  createOperationTemplate,
+  updateOperationTemplate,
+  deleteOperationTemplate
+} from '@/api/operation-template'
 import Table from '@/components/Table'
 import notify from '@/utils/notify'
 
 export default {
-  name: 'OrganizationSetting',
+  name: 'OperationTemplateSetting',
   components: {
     Table
   },
@@ -40,60 +41,65 @@ export default {
     }
     return {
       tableData: [],
+      loading: false,
       fields: [{
+        prop: 'id',
+        label: '代碼',
+        width: '180',
+        dialog: {
+          show: false,
+        },
+        filterable: true
+      }, {
         prop: 'name',
-        label: '組織名稱',
+        label: '範本名稱',
         dialog: {
           show: true,
-          data: [{
-              value: 1, text: 'Organization 1'
-            }, {
-              value: 2, text: 'Organization 5'
-            }],
-          type: 'select',
-          require: true,
-          filter: true
-        }
-      }],
-      loading: false
+          type: 'text',
+        },
+        filterable: true
+      }]
     }
   },
   created() {
-    this.fetchOrganization()
+    this.fetchData()
   },
   methods: {
-    fetchOrganization() {
-      getOrganization().then(response => {
+    // 取得資料表的 Data
+    fetchData() {
+      this.loading = true
+      getOperationTemplate().then((response) => {
         setTimeout(() => {
-          this.tableLoading = false
+          this.loading = false,
           this.tableData = response.data
-        }, 150)
+        }, 1000)
       })
     },
     createEvent(data) {
-      this.tableLoading = true
-      createOrganization(data).then(response => {
+      const { name } = data
+      this.loading = true
+      createOperationTemplate({ name }).then((response) => {
         if (response.isSuccess) {
-          this.fetchOrganization()
+          this.fetchData()
           notify.Success('新增成功')
         }
       })
     },
     updateEvent(data) {
-      this.tableLoading = true
-      updateOrganization(data).then((response) => {
+      this.loading = true
+      updateOperationTemplate(data).then((response) => {
         if (response.isSuccess) {
-          this.fetchOrganization()
+          this.fetchData()
           notify.Success('修改成功')
         }
       })
     },
-    deleteEvent(row, index) {
-      this.tableLoading = true
-      deleteOrganization({id: row.id}).then((response) => {
+    deleteEvent(data) {
+      this.loading = true
+      deleteOperationTemplate(data).then((response) => {
         if (response.isSuccess) {
-          this.fetchOrganization()
-          notify.Success('删除成功')
+          this.fetchData()
+          notify.Success('刪除成功')
         }
       })
     }
@@ -102,9 +108,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .action-icon {
   text-align: center
 }
-
 </style>
