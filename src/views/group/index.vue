@@ -25,12 +25,6 @@ export default {
   components: {
     GroupComponent: Group,
     ApplicationList
-  },
-  data() {
-    return {
-    }
-  },
-  methods: {
   }
 }
 </script>

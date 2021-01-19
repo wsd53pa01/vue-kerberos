@@ -6,25 +6,13 @@ module.exports = [
     url: '/operation/',
     type: 'get',
     response: config => {
-      const { applicationId, name, operationFlag, limit, page } = config.query
-      let filterOperation = operation.filter(x => {
-        const filterApplication = x.applicationId == applicationId
-        const filterName = x.name.includes(name) || name === '' || name == null
-        const filteroperationFlag = x.operationFlag == operationFlag || operationFlag == '' || operationFlag == null
-        return filterApplication && filterName && filteroperationFlag
-      })
-
-      if (limit && page) {
-        const start = page * limit - limit
-        const end = page * limit
-        filterOperation = filterOperation.slice(start, end)
-      }
-
+      const { applicationId } = config.query
+      let operationFilter = operation.filter(x => x.applicationId == applicationId)
       return createResult(
         true,
         '',
         20000,
-        filterOperation
+        operationFilter
       )
     }
   },
@@ -68,7 +56,6 @@ module.exports = [
     type: 'put',
     response: config => {
       const { id, name } = config.body
-
       const toUpdate = operation.find(x => x.id == id)
       toUpdate.name = name
       return createResult(
@@ -90,7 +77,6 @@ module.exports = [
           element.name = ''
         }
       })
-
       return createResult(
         true,
         '',

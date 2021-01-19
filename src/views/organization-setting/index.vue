@@ -52,8 +52,8 @@ export default {
             }],
           type: 'select',
           require: true,
-          filter: true
-        }
+        },
+        filterable: true
       }],
       loading: false
     }
@@ -75,7 +75,7 @@ export default {
       createOrganization(data).then(response => {
         if (response.isSuccess) {
           this.fetchOrganization()
-          notify.Success('新增成功')
+          notify.success('新增成功')
         }
       })
     },
@@ -84,7 +84,7 @@ export default {
       updateOrganization(data).then((response) => {
         if (response.isSuccess) {
           this.fetchOrganization()
-          notify.Success('修改成功')
+          notify.success('修改成功')
         }
       })
     },
@@ -93,7 +93,7 @@ export default {
       deleteOrganization({id: row.id}).then((response) => {
         if (response.isSuccess) {
           this.fetchOrganization()
-          notify.Success('删除成功')
+          notify.success('删除成功')
         }
       })
     }

@@ -2,7 +2,7 @@
 <template>
   <div class="app-container">
     <Table
-      :title="'權限範本'"
+      :title="'操作功能範本'"
       :fields="fields"
       edit-dialog-width="400px"
       :data="tableData"
@@ -34,7 +34,7 @@ export default {
   data() {
     const validateOrganizationName = (rule, value, callback) => {
       if (value == '') {
-        callback(new Error('請選擇組織名稱'))
+        callback(new Error(''))
       } else {
         callback()
       }
@@ -81,7 +81,7 @@ export default {
       createOperationTemplate({ name }).then((response) => {
         if (response.isSuccess) {
           this.fetchData()
-          notify.Success('新增成功')
+          notify.success('新增成功')
         }
       })
     },
@@ -90,7 +90,7 @@ export default {
       updateOperationTemplate(data).then((response) => {
         if (response.isSuccess) {
           this.fetchData()
-          notify.Success('修改成功')
+          notify.success('修改成功')
         }
       })
     },
@@ -99,7 +99,7 @@ export default {
       deleteOperationTemplate(data).then((response) => {
         if (response.isSuccess) {
           this.fetchData()
-          notify.Success('刪除成功')
+          notify.success('刪除成功')
         }
       })
     }

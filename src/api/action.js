@@ -9,7 +9,6 @@ export function getAction(params) {
 }
 
 export function updateAction(data) {
-  console.log(data)
   return request({
     url: '/action/',
     method: 'put',

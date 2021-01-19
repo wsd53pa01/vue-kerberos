@@ -133,12 +133,11 @@
               <!-- text input -->
               <div
                 v-show="field.dialog.type == 'text'"
-                style="display:inline-block; width:75%"
+                style="display:inline-block; width:auto"
               >
                 <el-input
                   v-show="field.dialog.type == 'text'"
                   v-model="form[field.prop]"
-                  @keyup.enter.native="form[field.prop] =! null ? executeChose(dialog.status) : handleCancel "
                 />
               </div>
             </el-form-item>
@@ -262,7 +261,7 @@ export default {
       this.dialog.visible = false
     },
     handleUpdate(row) {
-      this.form = Object.assign({}, row)
+      this.form = row
       this.dialog.status = 'update'
       this.dialog.visible = true
       this.$nextTick(() => {

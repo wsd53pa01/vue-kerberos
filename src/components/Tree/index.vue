@@ -167,14 +167,16 @@ export default {
     },
     // 新增新的子節點。
     appendChild(node) {
-      node.data.children.push({
-        id: 0,
-        label: '',
-        children: [],
-        edit: true,
-        createNode: true,
-        disabled: true
-      })
+      if (!node.data.children.map(x => x.id).includes(0)) {
+        node.data.children.push({
+          id: 0,
+          label: '',
+          children: [],
+          edit: true,
+          createNode: true,
+          disabled: true
+        })
+      }
       this.$nextTick(() => {
         this.$refs.input.focus()
       })
@@ -190,6 +192,7 @@ export default {
             this.updateNode(node)
             break;
           case data.createNode == true:
+            data.parentId ==
             this.createNode(node)
             break;
         }

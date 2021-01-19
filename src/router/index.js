@@ -131,9 +131,9 @@ export const constantRoutes = [
       },
       {
         path: 'operation-template-setting',
-        name: '權限範本設定',
+        name: '操作功能範本設定',
         component: () => import('@/views/operation-template-setting/index'),
-        meta: { title: '權限範本設定' }
+        meta: { title: '操作功能範本設定' }
       }
     ]
   },

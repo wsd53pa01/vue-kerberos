@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
 export default {
-  Success(message) {
+  success(message) {
     Vue.prototype.$notify({
       title: '成功',
       message: message,
