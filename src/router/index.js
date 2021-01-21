@@ -98,7 +98,7 @@ export const constantRoutes = [
         path: '/permission',
         name: 'RolePermission',
         component: () => import('@/views/permission/index'),
-        meta: { title: '角色權限管理', icon: 'el-icon-key' }
+        meta: { title: '權限管理', icon: 'el-icon-key' }
       }
     ]
   },

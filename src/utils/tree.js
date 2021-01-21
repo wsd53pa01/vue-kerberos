@@ -56,7 +56,7 @@ export function formatNode(data) {
     data_id: data.data_id,
     parentId: data.parentId,
     children: data.children ?? [],
-    label: data.label,
+    label: data.name,
     tag: data.tag,
     checked: false,
     createVisible: data.createVisible | false,

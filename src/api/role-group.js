@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function getRelation(applicationId, roleId, groupId) {
+export function getRelation(roleId, groupId) {
   return request({
     url: '/role-group/',
     method: 'get',
-    params: { applicationId, roleId, groupId }
+    params: { roleId, groupId }
   })
 }
 

@@ -16,8 +16,6 @@ module.exports = [
     type: 'get',
     response: config => {
       const { roleId, actionIds } = config.query
-      console.log(config.query)
-      console.log(rolePermission)
       let permissionList = []
       if ( roleId != null && actionIds != null) {
         permissionList = rolePermission.filter(x => x.roleId == roleId && actionIds.includes(x.actionId.toString()))

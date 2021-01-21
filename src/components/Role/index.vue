@@ -16,7 +16,7 @@ import Transfer from '@/components/Transfer'
 import { getGroup } from '@/api/group'
 import { createRole, deleteRole, updateRole } from '@/api/role'
 import { tree, assign, deleteRoleGroup } from '@/api/role-group'
-import { convertTreeData } from '@/utils'
+import { convertTreeData } from '@/utils/'
 
 
 export default {

@@ -3,7 +3,7 @@
     ref:="app"
     title="應用程式列表"
     :data="applications"
-    button-layout="vertical"
+    :button-layout="buttonLayout"
     :searchable="true"
     @onClick="applicationClick"
   >
@@ -19,6 +19,23 @@ export default {
   components: {
     CardListButton
   },
+  /**
+   * @param {String} prop.buttonLayout 設定縱向或橫向。
+   */
+  props: {
+    buttonLayout: {
+      type: String,
+      default: 'vertical',
+      validator: function (value) {
+        return ['vertical', 'horizontal'].indexOf(value) !== -1
+      }
+    }
+  },
+  data() {
+    return {
+      applications: []
+    }
+  },
   computed: {
     applicationId: {
       get() {
@@ -31,11 +48,6 @@ export default {
   },
   created() {
     this.fetchApplication()
-  },
-  data() {
-    return {
-      applications: []
-    }
   },
   methods: {
     fetchApplication() {

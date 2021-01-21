@@ -33,7 +33,7 @@ module.exports = [
     type: 'post',
     response: config => {
       const { applicationId, name } = config.body
-      let maxId = Math.max(...group.filter(g => g.application_id == applicationId).map(g => g.id)) + 1
+      let maxId = Math.max(...group.map(g => g.id)) + 1
       group.push({ id: maxId, name: name, application_id: applicationId })
       let data = group.find(g => g.id == maxId)
       return {
@@ -66,7 +66,8 @@ module.exports = [
     type: "delete",
     response: config => {
       const { id } = config.body
-      data = data.filter(value => value.id != id)
+      let index = group.findIndex(x => x.id == id)
+      group.splice(index, 1)
       return {
         isSuccess: true,
         message: '刪除成功',

@@ -20,16 +20,13 @@ module.exports = [
     url: "/action/",
     type: "put",
     response: config => {
-      console.log( config.body)
       const { menuCode } = config.body;
-      console.log(menuCode)
       let data = action.find(value => value.menuCode == menuCode)
       Object.keys(config.body).forEach(key => {
         if (key != menuCode && key != 'id') {
           data[key] = config.body[key]
         }
       })
-      console.log(data)
       return createResponse(true, '', 20000, data)
     }
   },
@@ -37,7 +34,6 @@ module.exports = [
     url: "/action/",
     type: "post",
     response: config => {
-      console.log('post before: ', action)
       const { href, icon, operationFlag, sortNumber, parentCode, menuName, applicationId } = config.body;
       const d = {
         id: Math.max(...action.map(x => x.id)) + 1,
@@ -51,7 +47,6 @@ module.exports = [
         applicationId
       }
       action.push(d)
-      console.log('post after: ', action)
       return createResponse(
         true,
         "更新成功",

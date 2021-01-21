@@ -1,27 +1,15 @@
 <template>
   <div>
-    <el-row>
-      <card-list-button
-        title="角色列表"
-        class="role-card"
-        :data="roles"
-        :searchable="true"
-        @onClick="onRoleClick"
-      />
-    </el-row>
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <Tree
-          ref="tree"
-          name="功能列表"
-          :defaultExpandAll="true"
-          :data="actions"
-          title="功能列表"
+    <div class="permission-row">
+      <div class="permission-col">
+        <action-list
+          style=" width: 100%;"
+          ref="actionList"
           @check="check"
         />
-      </el-col>
-      <el-col :span="12">
-        <el-card class="permission-card">
+      </div>
+      <div class="permission-col">
+        <el-card class="permission-card permission-list" >
           <div slot="header" class="card-header">
             權限列表
             <div class="icon-block">
@@ -47,39 +35,35 @@
             @getCheckedData="onCheckboxClick"
           />
         </el-card>
-      </el-col>
-    </el-row>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import CardListButton from '@/components/CardListButton'
-import Tree from '@/components/Transfer/components/tree'
 import CheckboxDataGrid from '@/components/CheckboxGrid/index'
-import { getRole } from '@/api/role'
-import { getAction } from '@/api/action'
 import { getOperation } from '@/api/operation'
 import { getRolePermission, createRolePermission, saveRolePermission } from '@/api/role-permission'
 import { operationFlagDecode } from '@/utils/operationFlag'
 import { convertTreeData } from '@/utils/tree'
+import ActionList from '@/components/Action/ActionList'
 
 import emitter from '@/utils/emitter.js'
 
 export default {
   name: 'Permission',
-  components: { Tree, CardListButton, CheckboxDataGrid },
+  components: {
+    CheckboxDataGrid,
+    ActionList
+  },
   data() {
     return {
-      roles: [],
-      actions: [],
       checkboxGrid: {
         data: [],
         columnList: []
       },
-      roleId: 0,
       selectAction: [],
       checkedData: [],
-      actionPermission: []
     }
   },
   computed: {
@@ -88,6 +72,9 @@ export default {
     },
     applicationId() {
       return this.$store.state.application.id
+    },
+    roleId() {
+      return this.$store.state.role.id
     },
     active: {
       get() {
@@ -100,71 +87,24 @@ export default {
   },
   watch: {
     applicationId() {
-      this.fetchAction()
-      this.fetchRole()
       this.fetchOperation()
+      this.$refs.actionList.fetchAction()
       this.checkedData = []
       this.checkboxGrid.data = []
     },
     roleId() {
+      this.$refs.actionList.fetchAction()
       this.checkedData = []
-
+      this.checkboxGrid.data = []
     }
   },
   created() {
-    this.fetchRole()
-    this.fetchAction()
     this.fetchOperation()
   },
+  mounted() {
+    this.$refs.actionList.fetchAction()
+  },
   methods: {
-    fetchRole() {
-      getRole(this.applicationId)
-        .then(response => {
-          if (response.isSuccess) {
-            this.roles = []
-            this.roleId = response.data.map(x => x.id ).includes(this.roleId) ? this.roleId : response.data[0].id
-            response.data.forEach(x => {
-              const obj = Object.assign({ isActive: x.id == this.roleId }, x)
-              this.roles.push(obj)
-            })
-            if (this.roles.length == 0) {
-              this.$notify({
-                title: '警告',
-                message: '尚未設定角色，請先設定角色',
-                type: 'warning'
-              });
-              this.$router.push({ path: '/role' })
-            }
-          }
-        })
-
-    },
-
-    fetchAction() {
-      getAction({applicationId: this.applicationId})
-        .then(response => {
-          let data = []
-          this.actions = []
-          this.actionPermission = []
-          if (response.isSuccess) {
-            response.data.forEach(x => {
-              data.push({
-                id: x.menuCode,
-                data_id: x.id,
-                name: x.menuName,
-                parentId: x.parentCode,
-                operationFlag: x.operationFlag
-              })
-            })
-            this.actions = convertTreeData(data)
-            this.actionPermission = response.data.map(x => { return { id: x.id, operationFlag: x.operationFlag}})
-          }
-        })
-        .catch(err => {
-          throw err
-        })
-    },
-
     fetchOperation() {
       this.checkboxGrid.columnList = []
       getOperation({applicationId: this.applicationId})
@@ -187,25 +127,33 @@ export default {
     fetchPermissionList() {
       this.checkedData = []
       this.checkboxGrid.data = []
-      const query = { roleId: this.roleId, actionIds: this.selectAction }
+      const query = { roleId: this.roleId, actionIds: this.selectAction.map(x => x.id) }
       getRolePermission(query)
         .then(response => {
           if (response.isSuccess) {
-            console.log(response)
+            let temp = []
             response.data.forEach(element => {
-              const { name, operationFlag, actionId } = element
-              const obj = Object.assign({
-                id: actionId,
-                name,
-                disabled: getDisabled(actionId),
-                checked: operationFlagDecode(
-                  this.checkboxGrid.columnList.map(x => x.id),
-                  operationFlag
-                )
+              temp.push({
+                id: element.actionId,
+                name: element.name,
+                operationFlag: element.operationFlag
               })
-              this.checkboxGrid.data.push(obj)
-              console.log(this.checkboxGrid.data)
             })
+            let data = this.selectAction
+              .map(x => {
+                let dataFind = temp.find(t => t.id == x.id)
+                let flag = dataFind == null ? 0 : dataFind.operationFlag
+                return {
+                  id: x.id,
+                  name: x.name,
+                  disabled: getDisabled(x.id),
+                  checked: operationFlagDecode(
+                    this.checkboxGrid.columnList.map(x => x.id),
+                    flag
+                  )
+                }
+              })
+            this.checkboxGrid.data.push(...data)
           }
         })
 
@@ -214,7 +162,7 @@ export default {
         this.checkboxGrid.columnList.forEach( x => {
           // operationFlagDecode 會解出現在的權限有哪些，在抓出那些 id 不包含在裡面。
           data[x.id] = !operationFlagDecode(this.checkboxGrid.columnList.map(y => y.id),
-            this.actionPermission.find(ap => ap.id == actionId).operationFlag).includes(x.id)
+            this.selectAction.find(ap => ap.id == actionId).operationFlag).includes(x.id)
         })
         return data
       }
@@ -223,7 +171,11 @@ export default {
 
     // 功能列表的 check 事件
     check(data) {
-      this.selectAction = this.$refs.tree.getCheckedNodes().map(x => x.data_id)
+      this.selectAction = data.map(x => { return {
+        id: x.data_id,
+        name: x.label,
+        operationFlag: x.operationFlag,
+      }})
       this.fetchPermissionList()
     },
 
@@ -238,12 +190,6 @@ export default {
             createSuccess()
           }
         })
-    },
-
-    // 角色列表 button click 事件
-    onRoleClick(value) {
-      this.roleId = value.id
-      this.fetchPermissionList()
     },
 
     // 權限列表的 check click 事件
@@ -271,7 +217,6 @@ export default {
           roleId: this.roleId,
           permission: this.checkedData
         }
-        console.log('request', request)
         createRolePermission(request)
           .then(response => {
             if (response.isSuccess) {
@@ -299,6 +244,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.permission-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.permission-col {
+  flex: 1;
+  margin: 0 5px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .el-row {
   margin-bottom: 10px;
   &:last-child {
@@ -313,13 +272,17 @@ export default {
 }
 
 .permission-card {
-  box-shadow: none;
-  height: calc(100vh - 380px);
-  min-height: 320px;
+  height: calc(100vh - 100px);
+  min-height: 380px;
+  width: 100%;
 }
 
 .permission-card::v-deep > .el-card__body {
-  overflow: hidden !important;
+  overflow: auto !important;
+}
+
+.permission-list .el-table {
+  height: calc(100vh - 200px) !important;
 }
 
 .card-header {

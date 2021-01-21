@@ -33,8 +33,8 @@
       :filter-node-method="filterNode"
       @node-click="onNodeClick"
       @check="check"
+      :draggable="draggable"
       @node-drop="handleDrop"
-      draggable
     >
       <span slot-scope="{ node, data }" style="width: 100%;">
         <div v-if="node.data.edit == true">
@@ -83,6 +83,7 @@
     </el-tree>
   </el-card>
 </template>
+
 <script>
 export default {
   name: 'Tree',
@@ -102,6 +103,7 @@ export default {
    * @param {Boolean} props.defaultExpandAll 展開所有的節點
    * @param {Boolean} props.searchable 搜尋框
    * @param {Boolean} props.checkboxVisible 開啟勾選框  default: false
+   * @param {Boolean} props.draggable 開啟拖放的功能 default: false
    */
   props: {
     title: {
@@ -130,17 +132,21 @@ export default {
     checkboxVisible: {
       type: Boolean,
       default: true
-    }
-  },
-  watch: {
-    filterText(val) {
-      this.$refs.tree.filter(val)
+    },
+    draggable: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       key: [],
       filterText: '',
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val)
     }
   },
   methods: {
@@ -192,7 +198,6 @@ export default {
             this.updateNode(node)
             break;
           case data.createNode == true:
-            data.parentId ==
             this.createNode(node)
             break;
         }
@@ -214,7 +219,7 @@ export default {
           break;
         case data.update == true:
           data.update = false
-          this.spliceNode(node)
+          this.spliceNode(node, data)
           break;
         case data.createNode == true:
           data.createNode = false
@@ -252,9 +257,7 @@ export default {
     handleDrop(draggingNode, dropNode, dropType, ev) {
       switch(true) {
         case dropType == 'inner':
-          console.log('inner')
           draggingNode.data.parentId = dropNode.data.id
-          console.log(draggingNode)
           break;
         case ['before', 'after'].includes(dropType):
           draggingNode.data.parentId = dropNode.data.parentId
@@ -302,13 +305,13 @@ export default {
 
 <style lang="scss">
 .tree-card {
-  height: calc(100vh - 380px);
+  height: calc(100vh - 200px);
   min-height: 320px;
   width:100%;
   margin-bottom: -1px;
 }
-.el-card__body {
-  height: calc(100% - 50px);
+.tree-card .el-card__body {
+  height: calc(100vh - 200px);
   overflow-y: auto !important;
 }
 .tree-input > input {

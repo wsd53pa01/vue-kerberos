@@ -3,10 +3,6 @@ const roleGroup = [{
   role_id:1,
   group_id:1,
 }, {
-  id: 2,
-  role_id: 2,
-  group_id: 1,
-}, {
   id: 3,
   role_id: 3,
   group_id: 2,

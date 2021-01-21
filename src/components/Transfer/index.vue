@@ -7,6 +7,8 @@
         :title="left.title"
         :data="left.data"
         :createRootVisible="leftCreateRootVisible"
+        default-expand-all
+        searchable
         @createRoot="leftCreateRoot"
         @updateNode="leftUpdateNode"
         @deleteNode="leftDeleteNode"
@@ -24,6 +26,8 @@
         :title="right.title"
         :data="right.data"
         :createRootVisible="rightCreateRootVisible"
+        default-expand-all
+        searchable
         @createRoot="rightCreateRoot"
         @updateNode="rightUpdateNode"
         @deleteNode="rightDeleteNode"
@@ -35,7 +39,7 @@
 </template>
 
 <script>
-import Tree from './components/tree'
+import Tree from '@/components/Tree';
 export default {
   name: 'Transfer',
   components: {

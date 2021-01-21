@@ -187,6 +187,7 @@ export default {
             this.createRoot(node)
             break;
           case data.update == true:
+            console.log(node)
             this.updateNode(node)
             break;
           case data.createNode == true:
@@ -297,15 +298,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 .tree-card {
-  height: calc(100vh - 380px);
+  height: calc(100vh - 200px);
   min-height: 320px;
   width:100%;
   margin-bottom: -1px;
 }
-.el-card__body {
-  height: calc(100% - 50px);
+.tree-card .el-card__body {
+  height: calc(100vh - 200px);
   overflow-y: auto !important;
 }
 .tree-input > input {

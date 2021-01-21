@@ -3,6 +3,7 @@
     <div>
       <el-row
         :gutter="20"
+        style="width: 100%; margin-left: 0;"
         v-if="modifiable"
         >
         <el-button style="width:100%;"
@@ -18,14 +19,16 @@
         :create-root-visible="modifiable"
         :create-node-visible="modifiable"
         :node-clickable="modifiable"
-        :defaultExpandAll="true"
-        :searchable="true"
+        default-expand-all
+        searchable
+        draggable
         @createRoot="createRoot"
         @createNode="createNode"
         @updateNode="updateNode"
         @deleteNode="deleteNode"
         @onNodeClick="onNodeClick"
         @handleDrop="handleDrop"
+        @check="check"
       />
     </div>
   </el-card>
@@ -45,7 +48,7 @@ export default {
   },
   /**
    * @param { Boolean } prop.readOnly 只能看到 Tree、搜尋框
-   */
+  */
   props: {
     modifiable: {
       type: Boolean,
@@ -165,8 +168,9 @@ export default {
     actionConvertToTree(data) {
       return formatNode({
         id: data.menuCode,
-        label: data.menuName,
+        name: data.menuName,
         children: [],
+        data_id: data.id,
         parentId: data.parentCode,
         createVisible: this.modifiable,
         updateVisible: this.modifiable,
@@ -185,6 +189,10 @@ export default {
     copyCheckedCode() {
       let text = this.$refs.tree.getCheckedNodes().map(x => x.id).join('\n')
       clip(text, event)
+    },
+    // 每次 check，回傳所有 check 的節點。
+    check(data) {
+      this.$emit('check', this.$refs.tree.getCheckedNodes())
     }
   }
 }

@@ -9,4 +9,12 @@ export default {
       duration: 2000
     })
   },
+  warning(message) {
+    Vue.prototype.$notify({
+      title: '警告',
+      message: message,
+      type: 'warning',
+      duration: 2000
+    })
+  }
 }

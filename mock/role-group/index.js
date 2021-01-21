@@ -4,6 +4,27 @@ let { roleGroup } = require('./role-group.js')
 
 module.exports = [
   {
+    url: '/role-group/',
+    type: 'get',
+    response: config => {
+      const { roleId, groupId } = config.query;
+      let data = roleGroup
+        .filter(x => x.role_id == roleId || x.group_id == groupId)
+        .map(x => {
+          return {
+            roleId: x.role_id,
+            groupId: x.group_id
+          }
+        })
+      return {
+        code: 20000,
+        message: 'success',
+        isSuccess: true,
+        data: data
+      }
+    }
+  },
+  {
     url: '/role-group/tree/',
     type: 'get',
     response: config => {
@@ -39,6 +60,34 @@ module.exports = [
         message: 'success',
         isSuccess: true,
         data: result
+      }
+    }
+  },
+  {
+    url: '/role-group/',
+    type: 'post',
+    response: config => {
+      const data = config.body
+      data.forEach( element => {
+        let index = roleGroup.findIndex(x => x.role_id == element.roleId && x.group_id == element.groupId)
+        roleGroup.splice(index, 1)
+      })
+      let maxId = Math.max(...roleGroup.map(y => y.id))
+      data.forEach( element => {
+        if (element.state) {
+          maxId++
+          roleGroup.push({
+            id: maxId,
+            role_id: element.roleId,
+            group_id: element.groupId
+          })
+        }
+      })
+      return {
+        code: 20000,
+        message: 'success',
+        isSuccess: true,
+        data: ''
       }
     }
   },
