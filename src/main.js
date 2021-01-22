@@ -31,6 +31,7 @@ if (process.env.NODE_ENV === 'production') {
   mockXHR()
 }
 
+
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })
 Vue.use(ElementUI, {

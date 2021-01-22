@@ -18,8 +18,10 @@
 <script>
 import Detail from './Detail'
 import ActionList from './ActionList'
+import emitter from '@/utils/emitter.js'
 
 export default {
+  name: 'ActionIndex',
   components: {
     Detail,
     ActionList
@@ -29,7 +31,22 @@ export default {
       detailData: {}
     }
   },
-  created() {
+  computed: {
+    active: {
+      get() {
+        return this.$store.state.process.active
+      },
+      set(val) {
+        this.$store.dispatch('process/setActive', val)
+      }
+    }
+  },
+  mounted() {
+    emitter.$on('next', () => { this.active += 1 })
+    emitter.$on('previous', () => { this.active -= 1 })
+  },
+  destroyed() {
+    emitter.$offAll(['next', 'previous'])
   },
   methods: {
     // 點擊節點，將節點資料放到 Detail 的卡片上

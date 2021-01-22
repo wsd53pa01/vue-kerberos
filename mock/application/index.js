@@ -1,6 +1,8 @@
 let { application } = require('./application.js')
 let { group } = require('../group/group.js')
 let { groupUser } = require('../group-user/group-user.js')
+let { operation } = require('../operation/operation.js')
+let { operationTemplate } = require('../operation-template/operation-template.js')
 
 module.exports = [
   {
@@ -37,6 +39,16 @@ module.exports = [
         id: maxGroupUserId,
         group_id: maxGroupId,
         user_id: 1111
+      })
+
+      let maxOperationId = Math.max(...operation.map(a => a.id)) + 1
+      operationTemplate.forEach(template => {
+        operation.push({
+          id: maxOperationId++,
+          applicationId: maxApplicationId,
+          name: template.name,
+          flag: template.id
+        })
       })
 
       return {

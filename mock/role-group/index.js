@@ -126,7 +126,7 @@ module.exports = [
       {
         let index = role.findIndex(x => x.id == data.data_id)
         role.splice(index, 1)
-        let roleGroupList = roleGroup.filter(x => role_id == data_id)
+        let roleGroupList = roleGroup.filter(x => x.role_id == data.data_id)
         roleGroupList.forEach(x => {
           let index = role.findIndex(x => x.id == data.data_id)
           role.splice(index, 1)

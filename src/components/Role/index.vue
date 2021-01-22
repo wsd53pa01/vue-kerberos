@@ -13,10 +13,11 @@
 
 <script>
 import Transfer from '@/components/Transfer'
+import emitter from '@/utils/emitter.js'
 import { getGroup } from '@/api/group'
 import { createRole, deleteRole, updateRole } from '@/api/role'
 import { tree, assign, deleteRoleGroup } from '@/api/role-group'
-import { convertTreeData } from '@/utils/'
+import { convertTreeData } from '@/utils/tree'
 
 
 export default {
@@ -37,6 +38,14 @@ export default {
     }
   },
   computed: {
+    active: {
+      get() {
+        return this.$store.state.process.active
+      },
+      set(val) {
+        this.$store.dispatch('process/setActive', val)
+      }
+    },
     applicationId: {
       get() {
         return this.$store.state.application.id
@@ -46,6 +55,13 @@ export default {
   created() {
     this.fetchLeftTree()
     this.fetchRightTree()
+  },
+  mounted() {
+    emitter.$on('next', () => { this.active += 1 })
+    emitter.$on('previous', () => { this.active -= 1 })
+  },
+  destroyed() {
+    emitter.$offAll(['next', 'previous'])
   },
   methods: {
     // 取得左樹的群組資料
@@ -94,15 +110,15 @@ export default {
       })
     },
     // 右樹的刪除節點事件，刪除角色
-    rightDeleteNode(obj) {
+    rightDeleteNode(node) {
       let data = {
-        tag: obj.node.data.tag,
-        id: obj.node.data.id,
-        data_id: obj.node.data.data_id
+        tag: node.data.tag,
+        id: node.data.id,
+        data_id: node.data.data_id
       }
       deleteRoleGroup(data).then(response => {
-        if (response.isSuccess)
-          obj.removeNode()
+        if (response.isSuccess) {
+        }
       })
     },
     // 右樹的更新節點事件，更新角色

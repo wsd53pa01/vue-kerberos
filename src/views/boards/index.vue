@@ -48,7 +48,7 @@ export default {
     },
 
     onClick(item) {
-      this.$store.dispatch('application/setId', id)
+      this.$store.dispatch('application/setId', item.id)
       this.$router.push({ path: '/actions' })
     },
 

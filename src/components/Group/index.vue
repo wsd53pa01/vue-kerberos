@@ -60,13 +60,13 @@ export default {
       this.fetchRightTree()
     }
   },
-  created() {
+  mounted() {
     emitter.$on('next', () => { this.active += 1 })
     emitter.$on('previous', () => { this.active -= 1 })
     this.fetchLeftTree()
     this.fetchRightTree()
   },
-  beforeCreate() {
+  destroyed() {
     emitter.$offAll(['next', 'previous'])
   },
   methods: {
@@ -75,18 +75,14 @@ export default {
       getAd()
         .then((response) => {
           if (response.isSuccess) {
-            console.log(response)
             this.left.data = convertTreeData(response.data)
-            console.log(this.left.data)
           }
         })
     },
     // 右樹的新增事件
     rightCreateRoot(node) {
       let postData = { applicationId: this.applicationId, name: node.data.label }
-      console.log(postData)
       createGroup(postData).then((response) => {
-        console.log(response)
         if (response.isSuccess) {
           let data = {
             checked: false,
@@ -98,7 +94,6 @@ export default {
             deleteVisible: true,
             updateVisible: true
           }
-          console.log(data)
           this.right.data.push(data)
           notify.success('新增成功')
         }

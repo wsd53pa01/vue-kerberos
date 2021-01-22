@@ -78,10 +78,10 @@ export default {
     },
     active: {
       get() {
-        return this.$store.state.creation.active
+        return this.$store.state.process.active
       },
       set(val) {
-        this.$store.dispatch('creation/setActive', val)
+        this.$store.dispatch('process/setActive', val)
       }
     }
   },
@@ -103,6 +103,11 @@ export default {
   },
   mounted() {
     this.$refs.actionList.fetchAction()
+    emitter.$on('next', () => { this.$router.push('/') })
+    emitter.$on('previous', () => { this.active -= 1 })
+  },
+  destroyed() {
+    emitter.$offAll(['next', 'previous'])
   },
   methods: {
     fetchOperation() {
