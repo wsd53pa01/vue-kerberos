@@ -187,7 +187,6 @@ export default {
             this.createRoot(node)
             break;
           case data.update == true:
-            console.log(node)
             this.updateNode(node)
             break;
           case data.createNode == true:
@@ -250,9 +249,7 @@ export default {
     handleDrop(draggingNode, dropNode, dropType, ev) {
       switch(true) {
         case dropType == 'inner':
-          console.log('inner')
           draggingNode.data.parentId = dropNode.data.id
-          console.log(draggingNode)
           break;
         case ['before', 'after'].includes(dropType):
           draggingNode.data.parentId = dropNode.data.parentId

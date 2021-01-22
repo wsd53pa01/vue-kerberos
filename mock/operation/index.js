@@ -22,7 +22,6 @@ module.exports = [
     type: 'post',
     response: config => {
       const body = config.body
-      console.log(body)
       if (!body.applicationId) {
         return createResult(
           false,

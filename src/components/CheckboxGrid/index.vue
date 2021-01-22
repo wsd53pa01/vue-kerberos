@@ -244,7 +244,6 @@ export default {
           )
         })
         .map(value => {
-          console.log(value)
           return {
             id: value.id,
             name: value.name,
