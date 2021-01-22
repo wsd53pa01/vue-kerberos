@@ -10,15 +10,31 @@
         @click="appendRoot"
       />
     </div>
+    <div
+      style="padding: 10px 20px 10px"
+      v-if="searchable"
+    >
+      <el-input
+        prefix-icon="el-icon-search"
+        style="height: 28px"
+        placeholder="搜尋"
+        v-model="filterText">
+      </el-input>
+    </div>
     <el-tree
       :data="data"
-      show-checkbox
+      :show-checkbox="checkboxVisible"
       node-key="id"
       ref="tree"
+      :default-expand-all="defaultExpandAll"
       :default-expanded-keys="key"
       :expand-on-click-node="false"
       :highlight-current="nodeClickable"
+      :filter-node-method="filterNode"
       @node-click="onNodeClick"
+      @check="check"
+      @node-drop="handleDrop"
+      draggable
     >
       <span slot-scope="{ node, data }" style="width: 100%;">
         <div v-if="node.data.edit == true">
@@ -36,12 +52,13 @@
           </el-input>
         </div>
         <div v-else>
-          <!-- <el-button
+          <el-button
+            v-if="data.createVisible"
             type="text"
             class="icon"
             icon="el-icon-plus"
             @click="appendChild(node)"
-          /> -->
+          />
           <el-button
             v-if="data.updateVisible"
             class="icon"
@@ -82,6 +99,9 @@ export default {
    * }]} props.data tree 的 data
    * @param {Boolean} props.createRootVisible 新增根節點按鈕，顯示或不顯示
    * @param {Boolean} props.nodeClickable 節點可否點選，若設定為true則會highlight，預設false
+   * @param {Boolean} props.defaultExpandAll 展開所有的節點
+   * @param {Boolean} props.searchable 搜尋框
+   * @param {Boolean} props.checkboxVisible 開啟勾選框  default: false
    */
   props: {
     title: {
@@ -98,14 +118,36 @@ export default {
     nodeClickable: {
       type: Boolean,
       default: false
+    },
+    defaultExpandAll: {
+      type: Boolean,
+      default: false
+    },
+    searchable: {
+      type: Boolean,
+      default: false
+    },
+    checkboxVisible: {
+      type: Boolean,
+      default: true
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val)
     }
   },
   data() {
     return {
       key: [],
+      filterText: '',
     }
   },
   methods: {
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
     // 新增空的根結點。
     appendRoot() {
       const newData = {
@@ -123,20 +165,19 @@ export default {
         this.$refs.input.focus()
       })
     },
-    // 新增空的根結點。
+    // 新增新的子節點。
     appendChild(node) {
-      // const newData = {
-      //   id: "5b16c132-efba-4084-a581-ff08dd9b91da",
-      //   label: 'test',
-      //   children: [],
-      //   parentId: "5b16c132-efba-4084-a581-ff08dd9b91da"
-      // }
-      // if (node.data.children == undefined) {
-      //   node.data.children = []
-      // }
-      // this.$nextTick(() => {
-      //   node.data.children.push(newData)
-      // })
+      node.data.children.push({
+        id: 0,
+        label: '',
+        children: [],
+        edit: true,
+        createNode: true,
+        disabled: true
+      })
+      this.$nextTick(() => {
+        this.$refs.input.focus()
+      })
     },
     // 節點修改後，發送修改事件。
     changeNode(node, data) {
@@ -148,6 +189,9 @@ export default {
           case data.update == true:
             this.updateNode(node)
             break;
+          case data.createNode == true:
+            this.createNode(node)
+            break;
         }
       }
       this.closeInput(node, data)
@@ -158,21 +202,21 @@ export default {
     },
     // 關閉 input
     closeInput(node, data) {
+      data.edit = false
+      data.disabled = false
       switch(true) {
         case data.create == true:
-          data.edit = false
           data.update = false
-          data.disabled = false
           this.data.shift()
           break;
         case data.update == true:
-          data.edit = false
           data.update = false
-          data.disabled = false
-          const parent = node.parent;
-          const children = parent.data.children || parent.data;
-          const index = children.findIndex(d => d.id === data.id);
-          children.splice(index, 1, data);
+          this.spliceNode(node)
+          break;
+        case data.createNode == true:
+          data.createNode = false
+          if (data.label.length == 0)
+            this.spliceNode(node)
           break;
       }
     },
@@ -191,17 +235,46 @@ export default {
         update: true,
         disabled: true
       }
-      const parent = node.parent;
-      const children = parent.data.children || parent.data;
-      const index = children.findIndex(d => d.id === data.id);
-      children.splice(index, 1, temp);
+      Object.keys(node.data).forEach(key => {
+        if (!Object.keys(temp).includes(key)) {
+          temp[key] = node.data[key]
+        }
+      })
+      this.spliceNode(node, temp)
       this.$nextTick(() => {
         this.$refs.input.focus()
       })
     },
+    // 父節點結果
+    handleDrop(draggingNode, dropNode, dropType, ev) {
+      switch(true) {
+        case dropType == 'inner':
+          draggingNode.data.parentId = dropNode.data.id
+          break;
+        case ['before', 'after'].includes(dropType):
+          draggingNode.data.parentId = dropNode.data.parentId
+          break;
+      }
+      this.$emit('handleDrop', draggingNode)
+    },
+    // 可將 Node 從 parent 中移除，或是用新的節點取代。
+    spliceNode(node, replace) {
+      const parent = node.parent;
+      const children = parent.data.children || parent.data;
+      const index = children.findIndex(d => d.id === node.data.id);
+      if (replace != null) {
+        children.splice(index, 1, replace);
+      } else {
+        children.splice(index, 1)
+      }
+    },
     // 新增根節點
     createRoot(node) {
       this.$emit('createRoot', node)
+    },
+    // 新增子節點
+    createNode(node) {
+      this.$emit('createNode', node)
     },
     // 更新節點
     updateNode(node) {
@@ -209,25 +282,28 @@ export default {
     },
     // 刪除節點
     deleteNode(node) {
-      this.$refs.tree.remove(node.data)
+      this.spliceNode(node)
       this.$emit('deleteNode', node)
     },
     onNodeClick(node) {
       this.$emit('onNodeClick', node)
+    },
+    check(node) {
+      this.$emit('check', node)
     }
   },
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 .tree-card {
-  height: calc(100vh - 380px);
+  height: calc(100vh - 200px);
   min-height: 320px;
   width:100%;
   margin-bottom: -1px;
 }
-.el-card__body {
-  height: calc(100% - 50px);
+.tree-card .el-card__body {
+  height: calc(100vh - 200px);
   overflow-y: auto !important;
 }
 .tree-input > input {

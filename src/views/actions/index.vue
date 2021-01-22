@@ -2,10 +2,7 @@
   <div class="app-container">
     <el-row :gutter="20">
       <el-col :span="24">
-        <card-list-button
-          title="應用程式列表"
-          :data="applications"
-          @onClick="onApplicationClick"
+        <application-list
         />
       </el-col>
     </el-row>
@@ -24,12 +21,14 @@
 </template>
 
 <script>
-import { getApplication } from '@/api/application'
+import ApplicationList from '@/components/ApplicationList'
 import Action from '@/components/Action'
-import CardListButton from '@/components/CardListButton'
 
 export default {
-  components: { Action, CardListButton },
+  components: {
+    Action,
+    ApplicationList
+  },
   data() {
     return {
       applications: []
@@ -41,29 +40,8 @@ export default {
     }
   },
   created() {
-    this.getApplication()
   },
   methods: {
-    getApplication() {
-      getApplication()
-        .then(response => {
-          if (response.isSuccess) {
-            response.data.forEach(element => {
-              const assignObject = {
-                isActive: this.applicationId == element.id
-              }
-              this.applications.push(Object.assign(assignObject, element))
-            })
-          }
-        })
-        .catch(err => {
-          throw err
-        })
-    },
-
-    onApplicationClick(item) {
-      this.$store.commit('application/SET_ID', item.id)
-    }
   }
 }
 </script>

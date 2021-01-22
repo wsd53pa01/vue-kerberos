@@ -12,20 +12,18 @@
           </div>
         </el-header>
         <el-main>
-          <keep-alive>
-            <component :is="main"></component>
-          </keep-alive>
+          <component :is="main"></component>
         </el-main>
         <el-footer>
           <el-row>
             <el-col :span="11" :offset="1">
-              <el-button :disabled="step.length-1 == active || active == 0" type="primary">完成</el-button>
+              <el-button :disabled="step.length-1 == active || active == 0" type="primary" @click="finish">完成</el-button>
             </el-col>
             <el-col :span="2" :offset="5">
               <el-button :disabled="active == 0" type="primary" @click="previous">上一步</el-button>
             </el-col>
             <el-col :span="3" :offset="2">
-              <el-button :disabled="step.length-1 == active" type="primary" @click="next">下一步</el-button>
+              <el-button type="primary" @click="next">下一步</el-button>
             </el-col>
           </el-row>
         </el-footer>
@@ -39,8 +37,7 @@ import Application from './components/Application'
 import Group from '@/components/Group'
 import Role from '@/components/Role'
 import Action from '@/components/Action'
-import Permission from './components/Permission'
-import Finish from './components/Finish'
+import Permission from '@/components/Permission'
 import emitter from '@/utils/emitter'
 
 export default {
@@ -51,7 +48,6 @@ export default {
     Role,
     Action,
     Permission,
-    Finish
   },
   data() {
     return {
@@ -70,9 +66,6 @@ export default {
       }, {
         title: '角色權限設定',
         component: 'Permission'
-      }, {
-        title: '完成',
-        component: 'Finish'
       }],
       title: '',
       main: ''
@@ -102,6 +95,9 @@ export default {
     },
     next() {
       emitter.$emit('next')
+    },
+    finish() {
+      this.$router.push('/')
     }
   }
 }

@@ -3,8 +3,8 @@
     :left="left"
     :right="right"
     ref="transfer"
+    right-create-root-visible
     @addClick="addClick"
-    :rightCreateRootVisible="true"
     @rightCreateRoot="rightCreateRoot"
     @rightUpdateNode="rightUpdateNode"
     @rightDeleteNode="rightDelete"
@@ -17,7 +17,8 @@ import Transfer from '@/components/Transfer'
 import emitter from '@/utils/emitter.js'
 import { getAd, createGroup, updateGroup } from '@/api/group'
 import { tree, assign, deleteGroupUser } from '@/api/group-user'
-import { convertTreeData } from '@/utils'
+import { convertTreeData, formatNode } from '@/utils/tree'
+import notify from '@/utils/notify'
 
 export default {
   name: 'Group',
@@ -59,37 +60,47 @@ export default {
       this.fetchRightTree()
     }
   },
-  beforeCreate() {
-    emitter.$offAll(['next', 'previous'])
-  },
-  created() {
+  mounted() {
     emitter.$on('next', () => { this.active += 1 })
     emitter.$on('previous', () => { this.active -= 1 })
-    getAd().then((response) => {
-      this.left.data = convertTreeData(response.data)
-    })
+    this.fetchLeftTree()
     this.fetchRightTree()
   },
+  destroyed() {
+    emitter.$offAll(['next', 'previous'])
+  },
   methods: {
+    // 抓取 AD 群組（左樹）的資料
+    fetchLeftTree() {
+      getAd()
+        .then((response) => {
+          if (response.isSuccess) {
+            this.left.data = convertTreeData(response.data)
+          }
+        })
+    },
     // 右樹的新增事件
     rightCreateRoot(node) {
       let postData = { applicationId: this.applicationId, name: node.data.label }
       createGroup(postData).then((response) => {
-        this.right.data.push({
-          checked: false,
-          children: [],
-          data_id: response.data.id,
-          id: `g_${response.data.id}`,
-          label: response.data.name,
-          tag: 'group',
-          deleteVisible: true,
-          updateVisible: true
-        })
+        if (response.isSuccess) {
+          let data = {
+            checked: false,
+            children: [],
+            data_id: response.data.id,
+            id: `g_${response.data.id}`,
+            label: response.data.name,
+            tag: 'group',
+            deleteVisible: true,
+            updateVisible: true
+          }
+          this.right.data.push(data)
+          notify.success('新增成功')
+        }
       })
     },
     // 右樹的刪除節點事件
     rightDelete(node) {
-      console.log(node)
       let data = {
         tag: node.data.tag,
         id: node.data.id,
@@ -113,74 +124,48 @@ export default {
         case data.tag == 'user':
           break;
         case data.tag == 'group':
-          updateGroup({id: data.data_id, name: data.label}).then(response => {
+          updateGroup({id: data.data_id, name: data.label})
+          .then(response => {
+            if (response.isSuccess) {
+              notify.success('更新成功')
+            }
           })
           break;
       }
     },
     // 取得右樹的資料
     fetchRightTree() {
-      tree(this.applicationId).then((response) => {
-        response.data.forEach(data => {
-          switch(true) {
-            case data.tag == 'group':
-              data.deleteVisible = true
-              data.updateVisible = true
-              break;
-            case data.tag == 'user':
-              data.deleteVisible = true
-              break;
-          }
+      tree(this.applicationId)
+        .then((response) => {
+          response.data.forEach(data => {
+            switch(true) {
+              case data.tag == 'group':
+                data.deleteVisible = true
+                data.updateVisible = true
+                break;
+              case data.tag == 'user':
+                data.deleteVisible = true
+                break;
+            }
+          })
+          this.right.data = convertTreeData(response.data)
         })
-        this.right.data = convertTreeData(response.data)
-      })
     },
-    // 加入按鈕的事件。
+    /**
+     * 加入按鈕的事件。
+     * 如果直接使用 fetchRightTree 會導致 Tree 被收起來
+     */
     addClick(data) {
       let usersId = data.left.map(x => x.id);
       let groupsId = data.right.filter(x => x.tag != 'user').map(x => x.data_id)
       let requestData = { groupsId, usersId }
       assign(requestData).then((response) => {
-        tree(this.applicationId).then((response) => {
-          let data = response.data
-          data.forEach(x => {
-            switch(true) {
-              case x.tag == "group":
-                x.deleteVisible = true
-                x.updateVisible = true
-                break;
-              case x.tag == "user":
-                x.deleteVisible = true
-                break;
-            }
-          })
-          response.data.forEach(d => {
-            if (d.tag != 'group')
-              return false;
-            let groupId = d.data_id
-            if (groupsId.includes(groupId)) {
-              const index = this.right.data.findIndex(i => i.data_id == groupId)
-              let users = []
-              response.data
-                .filter(u => u.tag == 'user' &&  // filter 調已存在 Group 底下的 User
-                  usersId.includes(u.data_id) &&
-                  !this.right.data[index].children.map(x => x.data_id).includes(u.data_id))
-                .forEach(x => {
-                  users.push({
-                    checked: false,
-                    deleteVisible: true,
-                    data_id: x.data_id,
-                    id: x.id,
-                    label: x.name,
-                    tag: 'user',
-                  })
-                })
-              this.right.data[index].children.push(...users)
-            }
-          })
-        })
+        if (response.isSuccess) {
+          this.fetchRightTree()
+          notify.success('新增成功')
+        }
       })
-    }
+    },
   }
 }
 </script>

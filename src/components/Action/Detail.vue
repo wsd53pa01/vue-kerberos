@@ -1,26 +1,17 @@
 <template>
   <el-card>
     <el-form ref="form" :label-position="'top'" :model="data">
-      <el-form-item label="父節點名稱">
-        <el-select
-          v-model="data.parentCode"
-          class="full-width"
-          placeholder="請選擇"
-        >
-          <el-option
-            v-for="parentCode in parentCodes"
-            :key="parentCode.id"
-            :value="parentCode.id"
-            :label="parentCode.name"
-          >
-          </el-option>
-        </el-select>
-      </el-form-item>
       <el-form-item label="選單名稱">
         <el-input v-model="data.menuName" />
       </el-form-item>
       <el-form-item label="選單代碼">
-        <el-input v-model="data.menuCode" disabled />
+        <el-input v-model="data.menuCode" disabled>
+          <i
+            class="el-icon-s-order el-input__icon menu-code-icon"
+            slot="suffix"
+            @click="handleIconClick(data.menuCode, $event)"
+          />
+        </el-input>
       </el-form-item>
       <el-form-item label="Icon">
         <el-input v-model="data.icon" />
@@ -44,20 +35,20 @@
           <el-button
             type="primary"
             size="mini"
-            :disabled="managePermissionDisabled"
-            @click="isPermissionVisible = true"
+            :disabled="operationManageDisabled"
+            @click="operationVisible = true"
           >
-            管理操作功能
+            操作功能管理
           </el-button>
         </span>
-        <el-checkbox-group v-model="checkedPermission">
+        <el-checkbox-group v-model="checkOperation">
           <el-checkbox
-            v-for="permission in permissions"
-            :key="permission.id"
+            v-for="operation in operations"
+            :key="operation.id"
             :disabled="submitDisabled"
-            :label="permission.operationFlag"
+            :label="operation.flag"
           >
-            {{ permission.name }}
+            {{ operation.name }}
           </el-checkbox>
         </el-checkbox-group>
       </el-form-item>
@@ -73,13 +64,21 @@
         </el-button>
       </el-form-item>
     </el-form>
+
+    <el-dialog title="操作功能管理" :visible.sync="operationVisible">
+      <Operation>
+      </Operation>
+    </el-dialog>
   </el-card>
 </template>
 
 <script>
-import { getAction, updateAction } from '@/api/action'
-import { getPermission } from '@/api/permission'
+import { updateAction } from '@/api/action'
+import { getOperation } from '@/api/operation'
 import { operationFlagDecode } from '@/utils/operationFlag'
+import clip from '@/utils/clipboard' // use clipboard directly
+import Operation from './Operation'
+import emitter from '@/utils/emitter.js'
 
 const defaultDetail = {
   parentCode: '',
@@ -92,6 +91,9 @@ const defaultDetail = {
 }
 
 export default {
+  components: {
+    Operation
+  },
   /**
    * @param {Object} props.data
    */
@@ -105,11 +107,11 @@ export default {
   },
   data() {
     return {
-      permissions: [],
-      managePermissionDisabled: true,
+      operations: [],
+      operationManageDisabled: true,
       submitDisabled: true,
-      checkedPermission: [],
-      parentCodes: []
+      checkOperation: [],
+      operationVisible: false
     }
   },
   computed: {
@@ -123,9 +125,8 @@ export default {
     },
     data: function(newVal, oldVal) {
       this.submitDisabled = false
-      this.getParentCode()
-      const operationFlags = this.permissions.map(value => value.operationFlag)
-      this.checkedPermission = operationFlagDecode(
+      const operationFlags = this.operations.map(value => value.flag)
+      this.checkOperation = operationFlagDecode(
         operationFlags,
         this.data.operationFlag
       )
@@ -133,35 +134,25 @@ export default {
   },
   created() {
     this.renderPage()
+    emitter.$on('operationChange', this.fetchOperation)
   },
+
+  destroyed() {
+    emitter.$offAll(['operationChange'])
+  },
+
   methods: {
     async renderPage() {
-      await this.getPermission()
-      this.managePermissionDisabled = false
+      await this.fetchOperation()
+      this.operationManageDisabled = false
       this.submitDisabled = true
     },
 
-    getParentCode() {
-      getAction({ applicationId: this.applicationId })
+    // 抓取操作功能資料
+    fetchOperation() {
+      getOperation({ applicationId: this.applicationId })
         .then(response => {
-          if (response.isSuccess) {
-            const parentCode = response.data
-              .filter(action => action.menuCode !== this.data.menuCode)
-              .map(action => {
-                return { id: action.menuCode, name: action.menuName }
-              })
-            this.parentCodes = [{ id: null, name: '#' }, ...parentCode]
-          }
-        })
-        .catch(err => {
-          throw err
-        })
-    },
-
-    getPermission() {
-      getPermission({ applicationId: this.applicationId })
-        .then(response => {
-          this.permissions = response.isSuccess ? response.data : []
+          this.operations = response.isSuccess ? response.data : []
         })
         .catch(err => {
           throw err
@@ -169,7 +160,7 @@ export default {
     },
 
     submit() {
-      this.data.operationFlag = this.checkedPermission.reduce(
+      this.data.operationFlag = this.checkOperation.reduce(
         (prev, curr) => prev + curr,
         0
       )
@@ -191,7 +182,21 @@ export default {
         message: message,
         type: 'success'
       })
+    },
+
+    handleIconClick(text, event) {
+      clip(text, event)
     }
   }
 }
 </script>
+
+<style lang="scss">
+  .menu-code-icon {
+    cursor: copy !important;
+    color: black;
+  }
+  .menu-code-icon:hover {
+    color: #304156;
+  }
+</style>

@@ -4,12 +4,15 @@
       {{ title }}
     </div>
     <div class="card-content">
-      <el-input placeholder="搜尋" prefix-icon="el-icon-search" />
-
+      <el-input
+        placeholder="搜尋"
+        prefix-icon="el-icon-search"
+        v-model="filterText"
+      />
       <el-table
         ref="table"
         class="table"
-        :data="data"
+        :data="tableData"
         style="width: 100%"
         max-height="100%"
         border
@@ -28,20 +31,30 @@
       <el-button
         class="restore"
         :disabled="disabled"
-        @click="restore"
-      >復原</el-button>
+        @click="restoreClick"
+      >
+        復原
+      </el-button>
       <el-button
         type="primary"
         class="submit"
         :disabled="disabled"
-        @click="getSelected"
-      >送出</el-button>
+        @click="sendClick"
+      >
+        送出
+      </el-button>
     </div>
   </el-card>
 </template>
 
 <script>
 export default {
+  name: 'ManageCard',
+  /**
+   * @param {String} props.title 卡片名稱。
+   * @param {Array} props.data 卡片的 row data。
+   * @param {Array} props.columns 卡片的欄位。
+   */
   props: {
     title: {
       type: String,
@@ -66,37 +79,70 @@ export default {
   },
   data() {
     return {
-      selectionItems: [],
+      filterText: '',
+      tableData: [],
+      rowSelected: [],
       disabled: true
     }
   },
-  computed: {
-    checkedColumn() {
-      return this.data.filter(x => x.status == 2)
-    }
-  },
   watch: {
-    data() {
-      this.restore()
+    /**
+     * Parent 改變 data 時，重製 tableData 的資料
+     */
+    data(newValue, oldValue) {
+      this.resetTableData()
+    },
+    /**
+     * 搜尋時，即時過濾資料
+     */
+    filterText(newValue, oldValue) {
+      let data = this.data.filter(x => x.name.indexOf(newValue) !== -1)
+      this.tableData = data
+    },
+    /**
+     * tableData 改變時，即時復原勾選狀態
+     */
+    tableData() {
+      this.resetTableCheckbox()
     }
   },
   methods: {
-    handleSelectionChange(val) {
+    /**
+     * 勾選 checkbox 會觸發這個事件。
+     * @param {id: Number, name: String, checked: Boolean} rows 有被勾選的 row
+     */
+    handleSelectionChange(rows) {
       this.disabled = false
-      this.selectionItems = val
+      this.rowSelected = rows
     },
-
-    getSelected() {
-      this.$emit('getSelected', this.selectionItems)
+    /**
+     * 送出按鈕的 click 事件。
+     * 會發送 sendClick 事件，將 rowSelected 發送出去。
+     */
+    sendClick() {
       this.disabled = true
+      this.tableData.forEach( data => data.checked = false)
+      this.rowSelected.forEach( row => row.checked = true)
+      this.$emit('sendClick', this.tableData)
     },
-
-    restore() {
+    // 復原按鈕的事件，點擊時，會重製 table data 和 checkbox。
+    restoreClick() {
+      this.resetTableData()
+      this.resetTableCheckbox()
+    },
+    // 重製 table 的 data。
+    resetTableData() {
+      this.tableData = this.data
+    },
+    // 重製 table 的 checkbox。
+    resetTableCheckbox() {
       this.$nextTick(() => {
         this.$refs.table.clearSelection()
-        this.checkedColumn.forEach(row => {
-          this.$refs.table.toggleRowSelection(row)
-        })
+        this.tableData
+          .filter(x => x.checked)
+          .forEach(row => {
+            this.$refs.table.toggleRowSelection(row)
+          })
         this.disabled = true
       })
     }

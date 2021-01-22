@@ -203,12 +203,14 @@ export default {
         })
     },
 
+    // 點擊 Item，觸發這個 function
     setActive(item) {
       this.dataSource.forEach(element => {
         element.isActive = element.id === item.id
       })
     },
 
+    // 點擊 Item，觸發這個 function
     onClick(item) {
       this.$emit(emitEvent.onClick, item)
     },

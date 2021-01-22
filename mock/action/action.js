@@ -6,7 +6,7 @@ let action = [
     icon: "",
     menuCode: "5b16c132-efba-4084-a581-ff08dd9b91da",
     menuName: "應用程式設置",
-    operationFlag: 12,
+    operationFlag: 3,
     parentCode: null,
     sortNumber: 0
   },
@@ -33,7 +33,7 @@ let action = [
     sortNumber: 0
   },
   {
-    id: 3,
+    id: 4,
     applicationId: 2,
     href: "",
     icon: "",
@@ -44,7 +44,7 @@ let action = [
     sortNumber: 0
   },
   {
-    id: 4,
+    id: 5,
     applicationId: 2,
     href: "",
     icon: "",

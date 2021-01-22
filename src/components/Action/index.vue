@@ -2,178 +2,57 @@
   <div class="full-height">
     <el-row :gutter="20" class="full-height">
       <el-col :span="12" class="scrollable full-height">
-        <el-card class="action-card">
-          <div>
-            <el-row :gutter="20">
-              <el-col :span="12">
-                <el-input placeholder="搜尋" prefix-icon="el-icon-search" />
-              </el-col>
-              <el-button
-                type="success"
-                icon="el-icon-s-order"
-                circle
-                :disabled="action.copyDisabled"
-              />
-            </el-row>
-            <Tree
-              title="功能列表"
-              :data="action.tree"
-              :create-root-visible="true"
-              :node-clickable="true"
-              @createRoot="createAction"
-              @updateNode="updateAction"
-              @deleteNode="deleteAction"
-              @onNodeClick="onNodeClick"
-            />
-          </div>
-        </el-card>
+        <action-list
+          @onNodeClick="onNodeClick"
+          modifiable
+        />
       </el-col>
-
       <el-col :span="12" class="scrollable full-height">
-        <detail :data="detail.data" />
+        <detail :data="detailData" />
       </el-col>
     </el-row>
 
-    <!-- <el-dialog title="操作功能管理" :visible.sync="isPermissionVisible" width="900px">
-      <permission
-        :permissions="permissions"
-        @dmlFinished="permissionUpdated"
-      />
-    </el-dialog> -->
   </div>
 </template>
 
 <script>
-import {
-  getAction,
-  updateAction,
-  createAction,
-  deleteAction
-} from '@/api/action'
 import Detail from './Detail'
-import Permission from './Permission'
-import Tree from '@/components/Transfer/components/tree';
-import { convertTreeData } from '@/utils'
+import ActionList from './ActionList'
+import emitter from '@/utils/emitter.js'
 
 export default {
+  name: 'ActionIndex',
   components: {
-    Tree,
     Detail,
-    Permission
+    ActionList
   },
   data() {
     return {
-      action: {
-        focusing: {},
-        data: [],
-        tree: [],
-        copyDisabled: true
-      },
-      detail: {
-        data: {}
-      }
+      detailData: {}
     }
   },
   computed: {
-    applicationId() {
-      const applicationId = this.$store.state.application.id
-      return applicationId
+    active: {
+      get() {
+        return this.$store.state.process.active
+      },
+      set(val) {
+        this.$store.dispatch('process/setActive', val)
+      }
     }
   },
-  watch: {
-    applicationId: function(newVal, oldVal) {
-      this.getActions()
-    }
+  mounted() {
+    emitter.$on('next', () => { this.active += 1 })
+    emitter.$on('previous', () => { this.active -= 1 })
   },
-  created() {
-    this.getActions()
+  destroyed() {
+    emitter.$offAll(['next', 'previous'])
   },
   methods: {
-
-    getActions() {
-      getAction({ applicationId: this.applicationId })
-        .then(response => {
-          this.action.data = response.isSuccess ? response.data : []
-          this.convertActionToTree()
-        })
-        .catch(e => {
-          throw e
-        })
+    // 點擊節點，將節點資料放到 Detail 的卡片上
+    onNodeClick(data) {
+      this.detailData = data
     },
-
-    createAction(node) {
-      const data = { parentCode: node.data.parent, menuName: node.data.label, applicationId: this.applicationId }
-      createAction(data)
-        .then(response => {
-          if (response.isSuccess) {
-            this.action.data.push(response.data)
-            this.convertActionToTree()
-            this.success('新增成功')
-          }
-        })
-        .catch(err => {
-          throw err
-        })
-    },
-
-    updateAction(value) {
-      const node = value.data
-      const toUpdate = this.action.data.find(value => value.menuCode === node.id)
-      toUpdate.menuName = node.label
-      updateAction(toUpdate)
-        .then(response => {
-          if (response.isSuccess) {
-            this.success(response.message)
-          }
-        })
-        .catch(err => {
-          throw err
-        })
-    },
-
-    deleteAction(value) {
-      const node = value.node.data
-      const toDelete = this.action.data.find(value => value.menuCode === node.id)
-      deleteAction({ id: toDelete.id })
-        .then(response => {
-          if (response.isSuccess) {
-            this.success(response.message)
-          }
-        })
-        .catch(err => {
-          throw err
-        })
-    },
-
-    onNodeClick(node) {
-      const data = this.action.data.find(value => value.menuCode === node.id)
-      this.detail.data = data
-    },
-
-    convertActionToTree() {
-      const tree = this.action.data.map(value => {
-        const { menuName, parentCode, menuCode } = value
-        return {
-          id: menuCode,
-          name: menuName,
-          parentId: parentCode,
-          children: [],
-          createVisible: true,
-          updateVisible: true,
-          deleteVisible: true
-        }
-      })
-      console.log(tree)
-      this.action.tree = convertTreeData(tree)
-    },
-
-    success(message) {
-      this.$notify({
-        title: 'Success',
-        message: message,
-        type: 'success'
-      })
-    }
   }
 }
 </script>
@@ -188,7 +67,10 @@ export default {
 .el-col {
   border-radius: 4px;
 }
-
+.el-card__body {
+  height: 100%;
+  overflow-y: auto !important;
+}
 .custom-tree-node {
   flex: 1;
   display: flex;
@@ -225,3 +107,4 @@ export default {
   margin-top: -60px;
 }
 </style>
+

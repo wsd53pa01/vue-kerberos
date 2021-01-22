@@ -36,13 +36,18 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
   {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
   },
+]
 
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
   {
     path: '/',
     component: Layout,
@@ -58,12 +63,11 @@ export const constantRoutes = [
         path: '/boards/process',
         name: 'Process',
         component: () => import('@/views/boards/process'),
-        meta: { title: '新增應用程式', noCache: true},
+        meta: { title: '新增應用程式', noCache: true, roles: ['admin', 'developer']},
         hidden: true
       }
     ]
   },
-
   {
     path: '/actions',
     component: Layout,
@@ -72,11 +76,10 @@ export const constantRoutes = [
         path: '/actions',
         name: 'Actions',
         component: () => import('@/views/actions/index'),
-        meta: { title: '功能管理', icon: 'menu' }
+        meta: { title: '功能管理', icon: 'menu', roles: ['admin', 'developer'] }
       }
     ]
   },
-
   {
     path: '/role',
     component: Layout,
@@ -89,7 +92,18 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/permission',
+    component: Layout,
+    children: [
+      {
+        path: '/permission',
+        name: 'RolePermission',
+        component: () => import('@/views/permission/index'),
+        meta: { title: '權限管理', icon: 'el-icon-key' }
+      }
+    ]
+  },
   {
     path: '/group',
     component: Layout,
@@ -102,29 +116,26 @@ export const constantRoutes = [
       }
     ]
   },
-
   {
     path: '/backend-platform',
     component: Layout,
-    // redirect: '/example/table',
     name: '後台管理',
-    meta: { title: '後臺管理', icon: 'el-icon-monitor' },
+    meta: { title: '後臺管理', icon: 'el-icon-monitor', roles: ['admin', 'developer']},
     children: [
       {
         path: 'organization-setting',
         name: '組織設定',
         component: () => import('@/views/organization-setting/index'),
-        meta: { title: '組織設定' }
+        meta: { title: '組織設定', roles: ['admin', 'developer']  }
       },
       {
-        path: 'permission-template-setting',
-        name: '權限範本設定',
-        component: () => import('@/views/permission-template-setting/index'),
-        meta: { title: '權限範本設定' }
+        path: 'operation-template-setting',
+        name: '操作功能範本設定',
+        component: () => import('@/views/operation-template-setting/index'),
+        meta: { title: '操作功能範本設定', roles: ['admin'] }
       }
     ]
   },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

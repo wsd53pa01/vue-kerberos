@@ -1,33 +1,30 @@
 const Mock = require('mockjs')
 const { param2Obj } = require('./utils')
 
-const user = require('./user/index')
-const table = require('./table')
+const user = require('./user')
 const organization = require('./organization')
-const permissionTemplate = require('./permission-template')
 const application = require('./application')
-const group = require('./group/index')
+const group = require('./group')
 const groupUser = require('./group-user')
 const action = require('./action')
-const permission = require('./permission')
+const operation = require('./operation')
 const role = require('./role')
-// const roleGroupRelation = require('./role-group.js')
 const roleGroup = require('./role-group')
-const rolePermission = require('./role-permission/index')
+const rolePermission = require('./role-permission')
+const operationTemplate = require('./operation-template')
 
 const mocks = [
   ...user,
-  ...table,
   ...organization,
-  ...permissionTemplate,
   ...application,
   ...group,
   ...groupUser,
   ...action,
-  ...permission,
+  ...operation,
   ...role,
   ...roleGroup,
-  ...rolePermission
+  ...rolePermission,
+  ...operationTemplate,
 ]
 
 // for front mock

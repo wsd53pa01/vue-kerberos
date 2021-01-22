@@ -2,6 +2,7 @@
   <div>
     <el-row>
       <card-list-button
+        title="角色列表"
         class="role-card"
         :data="roles"
         @onClick="onRoleClick"
@@ -13,7 +14,7 @@
       </el-col>
       <el-col :span="12">
         <el-card class="permission-card">
-          <div slot="header" class="card-header">角色權限列表</div>
+          <div slot="header" class="card-header">權限列表</div>
           <checkbox-data-grid
             :data="checkboxGrid.rolePermission"
             :header="checkboxGrid.permission"
@@ -31,7 +32,7 @@ import Tree from '@/components/Transfer/components/tree'
 import CheckboxDataGrid from '@/components/CheckboxGrid/index'
 import { getRole } from '@/api/role'
 import { getAction } from '@/api/action'
-import { getPermission } from '@/api/permission'
+import { getOperation } from '@/api/operation'
 import { getRolePermission, createRolePermission } from '@/api/role-permission'
 import { operationFlagDecode } from '@/utils/operationFlag'
 import emitter from '@/utils/emitter.js'
@@ -86,7 +87,7 @@ export default {
     // emitter.$on('previous', () => { this.active -= 1 })
     this.getRole()
     this.getAction()
-    this.getPermission()
+    this.getOperation()
   },
   methods: {
     getRole() {
@@ -117,7 +118,7 @@ export default {
         })
     },
 
-    getPermission() {
+    getOperation() {
       this.checkboxGrid.permission = [
         {
           id: 1,
@@ -132,7 +133,7 @@ export default {
           name: '操作4'
         },
       ]
-      // getPermission(this.applicationId)
+      // getOperation(this.applicationId)
       //   .then(response => {
       //     if (response.isSuccess) {
       //       this.checkboxGrid.permission = response.data.map(x => {
@@ -238,7 +239,7 @@ export default {
 
 <style lang="scss" scoped>
 .el-row {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   &:last-child {
     margin-bottom: 0;
   }
@@ -262,5 +263,10 @@ export default {
 
 .card-header {
   text-align: center;
+}
+
+.el-table::before {
+  z-index: 0;
+  bottom: auto;
 }
 </style>

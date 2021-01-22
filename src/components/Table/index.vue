@@ -1,9 +1,3 @@
-<!--
-propDialog: {
-  width: String, ex: '100px'
-  form: Object, ex: { fields: [{ name: 'fields name', data: ['option 1', 'option 2']}]}
-}
--->
 <template>
   <div class="table-container">
     <el-card class="box-card">
@@ -14,23 +8,24 @@ propDialog: {
       <!-- 搜尋框 -->
       <el-input
         v-for="(field, index) in fields"
-        v-show="field.filter.show"
+        v-if="searchBarVisible && field.filterable"
         :key="index"
         v-model="tableFilter[field.prop]"
         :placeholder="field.label"
         style="width: 180px;"
-        @keyup.enter.native="handleFilter()"
+        @keyup.enter.native="handleFilter('search')"
       />
       <el-button
         class="filter-item"
+        v-if="searchBarVisible"
         type="primary"
         icon="el-icon-search"
-        @click="handleFilter()"
+        @click="handleFilter"
       >
         搜尋
       </el-button>
       <el-button
-        :class="{'hidden': createOption.hidden}"
+        :class="{'hidden': !createVisible}"
         type="primary"
         style="margin-bottom: 8px"
         plain
@@ -41,7 +36,7 @@ propDialog: {
 
       <el-table
         v-loading="loading"
-        :data="tableData.list"
+        :data="tableList"
         border
         style="width: 100%"
         size="mini"
@@ -96,11 +91,11 @@ propDialog: {
 
       <!-- 分頁 -->
       <pagination
-        v-if="tableData.total > 0"
-        :total="tableData.total"
+        v-if="totalCount > 0"
+        :total="totalCount"
         :page.sync="tableFilter.page"
         :limit.sync="tableFilter.limit"
-        @pagination="fetchData(tableFilter)"
+        @pagination="handleFilter()"
       />
 
       <!-- dialog -->
@@ -108,7 +103,7 @@ propDialog: {
         :title="textMap[dialog.status]"
         :visible.sync="dialog.visible"
         append-to-body
-        :width="dialogWidth"
+        :width="editDialogWidth"
       >
         <el-form
           ref="form"
@@ -138,7 +133,7 @@ propDialog: {
               <!-- text input -->
               <div
                 v-show="field.dialog.type == 'text'"
-                style="display:inline-block; width:75%"
+                style="display:inline-block; width:auto"
               >
                 <el-input
                   v-show="field.dialog.type == 'text'"
@@ -149,7 +144,7 @@ propDialog: {
           </div>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="dialog.status==='create' ? createEvent() : updateEvent()">確認</el-button>
+          <el-button type="primary" @click="executeChose(dialog.status)">確認</el-button>
           <el-button @click="handleCancel()">取消</el-button>
         </div>
       </el-dialog>
@@ -166,41 +161,42 @@ export default {
   components: {
     Pagination
   },
+  /**
+   * @param { String } props.title 卡片的標頭。
+   * @param { Array } props.fields  設定欄位。
+   * @param { String } props.editDialogWidth 編輯室窗的寬度。
+   * @param { Array } props.data 表的資料。
+   * @param { Boolean } props.createVisible 開啟新增的 Button。\
+   * @param { Boolean } props.loading 開啟 table 的 loading
+   * @param { Boolean } props.searchBarVisible 開啟搜尋框
+   */
   props: {
     title: {
-      required: true,
       type: String
     },
     fields: {
+      required: true,
       type: Array
     },
-    dialogWidth: {
-      type: String
+    editDialogWidth: {
+      type: String,
+      default: 'auto'
     },
-    tableData: {
-      type: Object
+    data: {
+      required: true,
+      type: Array
     },
-    fetchData: {
-      type: Function
-    },
-    createOption: {
-      type: Object,
-      validator: (value) => {
-        const isValid = true
-        value = Object.assign({
-          hidden: false
-        }, value)
-        return isValid
-      }
-    },
-    deleteOption: {
-      type: Object
-    },
-    updateOption: {
-      type: Object
+    createVisible: {
+      type: Boolean,
+      default: false
     },
     loading: {
-      type: Boolean
+      type: Boolean,
+      default: false
+    },
+    searchBarVisible: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -221,13 +217,21 @@ export default {
       tableFilter: {
         page: 1,
         limit: 20
+      },
+      totalCount: 0,
+      tableList: []
+    }
+  },
+  watch: {
+    data: {
+      immediate: true,
+      handler(newVal, oldVal) {
+        this.tableList = newVal
+        this.totalCount = newVal == null ? 0 : newVal.length
       }
     }
   },
-  computed: {
-  },
   created() {
-    this.fetchData(this.tableFilter)
     this.fields.forEach((field) => {
       this.form[field.prop] = ''
       if (field.dialog.show && field.dialog.require) {
@@ -257,65 +261,76 @@ export default {
       this.dialog.visible = false
     },
     handleUpdate(row) {
-      this.form = Object.assign({}, row)
+      this.form = row
       this.dialog.status = 'update'
       this.dialog.visible = true
       this.$nextTick(() => {
         this.$refs['form'].clearValidate()
       })
     },
-    handleFilter() {
-      this.tableFilter.page = 1
-      this.fetchData(this.tableFilter)
+    /**
+     * 過濾資料。
+     * @param { String } type 過濾的類別，搜尋框要輸入 search，要初始化為第一頁。
+     */
+    handleFilter(type) {
+      if (type == 'search') {
+        this.tableFilter.page = 1
+      }
+      let filterKey = Object.keys(this.tableFilter).filter(key => !['page', 'limit'].includes(key))
+      let dataFilter = this.data.filter(item => {
+        let isValid = true
+        filterKey.forEach( key => {
+          let value = this.tableFilter[key]
+          if (value && item[key].toString().indexOf(value) < 0) {
+            isValid = false
+          }
+        })
+        return isValid
+      })
+      const { limit, page } = this.tableFilter
+      this.tableList = dataFilter.filter((item, index) => index < limit * page && index >= limit * (page -1))
     },
     resetForm() {
-      // this.form = Object.assign({ id: 0, name: '' })
       this.form['id'] = undefined
       this.fields.forEach((field) => {
         this.form[field.prop] = ''
       })
       this.form = Object.assign({}, this.form)
     },
+    // Table 新增資料的事件
     createEvent() {
-      console.log('create')
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          this.createOption.event(this.form)
+          // this.createOption.event(this.form)
           this.dialog.visible = false
-          this.$notify({
-            title: '成功',
-            message: '新增成功',
-            type: 'success',
-            duration: 2000
-          })
+          this.$emit('create', this.form)
         }
       })
     },
+    // Table 更新資料的事件
     updateEvent() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           const temp = Object.assign({}, this.form)
-          this.updateOption.event(temp)
-          this.$notify({
-            title: '成功',
-            message: '修改成功',
-            type: 'success',
-            duration: 2000
-          })
+          this.$emit('update', this.form)
           this.$nextTick(() => {
             this.dialog.visible = false
           })
         }
       })
     },
+    // Table 刪除資料的事件
     deleteEvent(row, index) {
-      this.deleteOption.event(row, index)
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
+      this.$emit('delete', row, index)
+      // this.deleteOption.event(row, index)
+    },
+    // Dialog 選擇要執行的事件
+    executeChose(type) {
+      if (type == 'create') {
+        this.createEvent()
+      } else {
+        this.updateEvent()
+      }
     }
   }
 }

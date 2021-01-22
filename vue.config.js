@@ -36,7 +36,7 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    before: process.env.ENV == 'mock' ? require('./mock/mock-server.js') : null
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

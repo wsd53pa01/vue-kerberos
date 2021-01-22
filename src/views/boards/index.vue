@@ -48,7 +48,7 @@ export default {
     },
 
     onClick(item) {
-      this.$store.commit('application/SET_ID', item.id)
+      this.$store.dispatch('application/setId', item.id)
       this.$router.push({ path: '/actions' })
     },
 
@@ -70,7 +70,6 @@ export default {
     },
 
     deleteApplication(item) {
-      console.log(item)
       const data = {
         id: item.id
       }

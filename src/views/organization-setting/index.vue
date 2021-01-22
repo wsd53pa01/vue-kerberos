@@ -2,25 +2,14 @@
   <div class="app-container">
     <Table
       :title="'組織設定'"
-      :fields="[{
-        prop: 'name',
-        label: '組織名稱',
-        dialog: {
-          show: true,
-          data: [{ value: 1, text: '嘉里大榮物流股份有限公司'}, { value: 2, text: 'Organization 5' }],
-          type: 'select',
-          require: true,
-        },
-        filter: {
-          show: true,
-        }
-      }]"
-      dialog-width="400px"
-      :table-data="tableData"
-      :fetch-data="getOrganizations"
-      :create-option="createOption"
-      :delete-option="deleteOption"
-      :update-option="updateOption"
+      :fields="fields"
+      edit-dialog-width="400px"
+      :data="tableData"
+      create-visible
+      search-bar-visible
+      @create="createEvent"
+      @delete="deleteEvent"
+      @update="updateEvent"
       :loading="loading"
     />
   </div>
@@ -33,13 +22,12 @@ import {
   updateOrganization,
   deleteOrganization
 } from '@/api/organization'
-import Pagination from '@/components/Pagination'
 import Table from '@/components/Table'
+import notify from '@/utils/notify'
 
 export default {
-  name: 'OraganizationSetting',
+  name: 'OrganizationSetting',
   components: {
-    Pagination,
     Table
   },
   data() {
@@ -51,35 +39,31 @@ export default {
       }
     }
     return {
-      tableData: {},
-      // TODO: 換成 api 取得組織
-      adOrganizations: (() => {
-        const prefixString = ''
-        const result = []
-        for (let i = 0; i <= 10; i++) {
-          result.push(prefixString + i)
-        }
-        return result
-      })(),
-      createOption: {
-        hidden: false,
-        event: this.createEvent
-      },
-      deleteOption: {
-        hidden: false,
-        event: this.deleteEvent
-      },
-      updateOption: {
-        hidden: false,
-        event: this.updateEvent
-      },
+      tableData: [],
+      fields: [{
+        prop: 'name',
+        label: '組織名稱',
+        dialog: {
+          show: true,
+          data: [{
+              value: 1, text: 'Organization 1'
+            }, {
+              value: 2, text: 'Organization 5'
+            }],
+          type: 'select',
+          require: true,
+        },
+        filterable: true
+      }],
       loading: false
     }
   },
+  created() {
+    this.fetchOrganization()
+  },
   methods: {
-    getOrganizations(query) {
-      this.tableLoading = true
-      getOrganization(query).then(response => {
+    fetchOrganization() {
+      getOrganization().then(response => {
         setTimeout(() => {
           this.tableLoading = false
           this.tableData = response.data
@@ -87,21 +71,30 @@ export default {
       })
     },
     createEvent(data) {
+      this.tableLoading = true
       createOrganization(data).then(response => {
         if (response.isSuccess) {
-          this.tableData.list.unshift(data)
+          this.fetchOrganization()
+          notify.success('新增成功')
         }
       })
     },
     updateEvent(data) {
+      this.tableLoading = true
       updateOrganization(data).then((response) => {
-        const findData = this.tableData.list.find(x => x.id == data.id)
-        findData.name = data.name
+        if (response.isSuccess) {
+          this.fetchOrganization()
+          notify.success('修改成功')
+        }
       })
     },
     deleteEvent(row, index) {
-      deleteOrganization(row.id).then((response) => {
-        this.tableData.list.splice(index, 1)
+      this.tableLoading = true
+      deleteOrganization({id: row.id}).then((response) => {
+        if (response.isSuccess) {
+          this.fetchOrganization()
+          notify.success('删除成功')
+        }
       })
     }
   }
