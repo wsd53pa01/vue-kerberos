@@ -1,0 +1,75 @@
+const rolePermission = [{
+  id: 1,
+  roleId: 1,
+  actionId: 1,
+  operationFlag: 12
+}, {
+  id: 2,
+  roleId: 1,
+  actionId: 2,
+  operationFlag: 7
+}, {
+  id: 3,
+  roleId: 1,
+  actionId: 3,
+  operationFlag: 15
+}, {
+  id: 4,
+  roleId: 2,
+  actionId: 1,
+  operationFlag: 15,
+}, {
+  id: 5,
+  roleId: 2,
+  actionId: 2,
+  operationFlag: 7,
+}, {
+  id: 6,
+  roleId: 2,
+  actionId: 3,
+  operationFlag: 3,
+}, {
+  id: 7,
+  roleId: 3,
+  actionId: 4,
+  operationFlag: 0,
+}, {
+  id: 8,
+  roleId: 3,
+  actionId: 5,
+  operationFlag: 15,
+}, {
+  id: 9,
+  roleId: 4,
+  actionId: 4,
+  operationFlag: 7,
+}, {
+  id: 10,
+  roleId: 4,
+  actionId: 5,
+  operationFlag: 15,
+}, {
+  id: 11,
+  roleId: 5,
+  actionId: 4,
+  operationFlag: 3,
+}, {
+  id: 12,
+  roleId: 5,
+  actionId: 5,
+  operationFlag: 15,
+}, {
+  id: 13,
+  roleId: 6,
+  actionId: 4,
+  operationFlag: 3,
+}, {
+  id: 14,
+  roleId: 6,
+  actionId: 5,
+  operationFlag: 15,
+}]
+
+module.exports = {
+  rolePermission
+}
