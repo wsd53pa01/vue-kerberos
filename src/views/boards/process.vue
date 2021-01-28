@@ -89,6 +89,9 @@ export default {
   created() {
     this.active = 0
   },
+  destroyed() {
+    this.$store.dispatch('process/setApplicationId', null)
+  },
   methods: {
     previous() {
       emitter.$emit('previous')
