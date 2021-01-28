@@ -4,6 +4,7 @@
     <el-form ref="form" :model="model" :rules="rule">
       <el-form-item prop="name">
         <el-input
+          :disabled="disabled"
           ref="input"
           v-model="model.name"
           placeholder="應用程式名稱"
@@ -16,7 +17,8 @@
 
 <script>
 import {
-  createApplication
+  createApplication,
+  getApplication
 } from '@/api/application'
 import emitter from '@/utils/emitter.js'
 
@@ -37,9 +39,19 @@ export default {
       rule: {
         name: [{ required: true, trigger: 'blur', validator: validateInput }]
       },
+      isNewApplication: true,
+      disabled: false
     }
   },
   computed: {
+    applicationId: {
+      get() {
+        return this.$store.state.process.applicationId
+      },
+      set(val) {
+        this.$store.dispatch('process/setApplicationId', val)
+      }
+    },
     active: {
       get() {
         return this.$store.state.process.active
@@ -52,24 +64,43 @@ export default {
   beforeCreate() {
     emitter.$offAll(['next', 'previous'])
   },
-  created() {
+  mounted() {
     emitter.$on('next', this.handleApplication)
     emitter.$on('previous', () => { this.active -= 1 })
+    this.fetchApplication()
   },
   destroyed() {
     emitter.$offAll(['next', 'previous'])
   },
   methods: {
     handleApplication() {
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          let data = { name: this.model.name }
-          createApplication(data).then((response) => {
-            this.$store.dispatch('application/setId', response.data.id)
-            this.active += 1
-          })
+      if (this.isNewApplication) {
+        this.$refs.form.validate(valid => {
+          if (valid) {
+            let data = { name: this.model.name }
+            createApplication(data).then((response) => {
+              this.$store.dispatch('application/setId', response.data.id)
+              this.applicationId = response.data.id
+              this.active += 1
+            })
+          }
+        })
+      } else {
+        this.active += 1
+        return false
+      }
+    },
+    fetchApplication() {
+      getApplication().then(response => {
+        if (response.isSuccess) {
+          const app = response.data.find(app => app.id == this.applicationId)
+          this.model.name = app == null ? '' : app.name
+          if (this.model.name !== '') {
+            this.isNewApplication = false
+            this.disabled = true
+          }
         }
-      })
+      }) 
     },
     onEnterEvent() {
       emitter.$emit('next')
